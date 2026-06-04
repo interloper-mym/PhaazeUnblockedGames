@@ -21,11 +21,16 @@ function displayGames(list) {
     const div = document.createElement("div");
     div.className = "game";
 
+    // WRAPPER (for badge positioning)
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    wrapper.style.display = "inline-block";
+
     const img = document.createElement("img");
 
     // SAFE IMAGE HANDLING
     if (!game.image) {
-      img.src = "photos/placeholder.png"; // optional fallback
+      img.src = "photos/placeholder.png";
     } else if (game.image.startsWith("http")) {
       img.src = game.image;
     } else {
@@ -37,7 +42,7 @@ function displayGames(list) {
     img.alt = game.name;
 
     img.onerror = () => {
-      img.src = "photos/placeholder.png"; // prevents broken images
+      img.src = "photos/placeholder.png";
     };
 
     img.onclick = () => {
@@ -49,7 +54,29 @@ function displayGames(list) {
     const title = document.createElement("p");
     title.textContent = game.name;
 
-    div.appendChild(img);
+    // =======================
+    // NEW BADGE (ADDED PART)
+    // =======================
+    if (game.new === true) {
+      const badge = document.createElement("div");
+      badge.textContent = "NEW";
+      badge.style.position = "absolute";
+      badge.style.top = "8px";
+      badge.style.left = "8px";
+      badge.style.background = "red";
+      badge.style.color = "white";
+      badge.style.padding = "4px 8px";
+      badge.style.fontSize = "12px";
+      badge.style.fontWeight = "bold";
+      badge.style.borderRadius = "6px";
+      badge.style.zIndex = "10";
+
+      wrapper.appendChild(badge);
+    }
+
+    wrapper.appendChild(img);
+
+    div.appendChild(wrapper);
     div.appendChild(title);
     container.appendChild(div);
   });
@@ -95,7 +122,7 @@ window.filterCategory = filterCategory;
 fetch("./config/games.json")
   .then((res) => res.json())
   .then((data) => {
-    console.log("Loaded games:", data); // DEBUG
+    console.log("Loaded games:", data);
     gamesData = data;
     displayGames(gamesData);
   })
