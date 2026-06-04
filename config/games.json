@@ -1,7 +1,7 @@
 [
   {
     "name": "Klonoa Empire of Dreams",
-    "image": "klona.jpg",
+    "image": "photos/klona.jpg",
     "path": "games/Klonoa_Empire_of_Dreams.html",
     "new": true,
     "category": "game"
