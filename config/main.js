@@ -1,72 +1,74 @@
-// Site settings
 var sitename = "Bens Unblocked Games";
 var subtext = "v1.2";
 
-// Title update
 document.title = `${document.title} | ${sitename}`;
 
 let gamesData = [];
 
-/* Render games */
-function displayFilteredGames(filteredGames) {
-  const gamesContainer = document.getElementById("gamesContainer");
-  gamesContainer.innerHTML = "";
+/* RENDER GAMES */
+function displayFilteredGames(list) {
+  const container = document.getElementById("gamesContainer");
+  container.innerHTML = "";
 
-  filteredGames.forEach((game) => {
-    const gameDiv = document.createElement("div");
-    gameDiv.classList.add("game");
+  list.forEach((game) => {
+    const div = document.createElement("div");
+    div.className = "game";
 
     const img = document.createElement("img");
-
-    // LOCAL images only (no external server)
-    img.src = game.image;
+    img.src = game.image; // local image path
     img.alt = game.name;
 
     img.onclick = () => {
-      window.location.href = `play.html?gameurl=${encodeURIComponent(game.path)}`;
+      window.location.href = `play.html?gameurl=${game.path}`;
     };
 
-    const title = document.createElement("p");
-    title.textContent = game.name;
+    const name = document.createElement("p");
+    name.textContent = game.name;
 
-    gameDiv.appendChild(img);
-    gameDiv.appendChild(title);
-    gamesContainer.appendChild(gameDiv);
+    div.appendChild(img);
+    div.appendChild(name);
+    container.appendChild(div);
   });
 }
 
-/* Search */
-function handleSearch() {
-  const value = document.getElementById("searchInput").value.toLowerCase();
+/* SEARCH */
+function handleSearchInput() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+
+  if (!Array.isArray(gamesData)) return;
 
   const filtered = gamesData.filter((g) =>
-    g.name.toLowerCase().includes(value)
+    g.name.toLowerCase().includes(input)
   );
 
   displayFilteredGames(filtered);
 }
 
-/* Load games.json (SAFE VERSION) */
+/* LOAD JSON (SAFE) */
 fetch("./config/games.json")
-  .then((res) => res.json())
-  .then((data) => {
-    console.log("Loaded games.json:", data);
+  .then((res) => res.text())
+  .then((text) => {
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error("games.json is not valid JSON");
+    }
 
     if (!Array.isArray(data)) {
-      throw new Error("games.json is NOT an array");
+      throw new Error("games.json must be an array []");
     }
 
     gamesData = data;
     displayFilteredGames(data);
   })
-  .catch((err) => {
-    console.error("Error loading games.json:", err);
-  });
+  .catch((err) => console.error("Error loading games.json:", err));
 
-/* Events */
+/* EVENTS */
 document
   .getElementById("searchInput")
-  .addEventListener("input", handleSearch);
+  .addEventListener("input", handleSearchInput);
 
 document.getElementById("title").innerHTML = sitename;
 document.getElementById("subtitle").innerHTML = subtext;
