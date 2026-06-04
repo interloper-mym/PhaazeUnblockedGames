@@ -1,8 +1,7 @@
 // This changes the title of your site
 
-var sitename = "Bens Unblocked Games"; // Change this to change the name of your website.
-var subtext = "v1.2"; // set the subtext
-
+var sitename = "Bens Unblocked Games";
+var subtext = "v1.2";
 // more settings in main.css
 
 
@@ -10,24 +9,31 @@ var subtext = "v1.2"; // set the subtext
 // END CONFIG
 // DO NOT MODIFY IF YOU DO NOT KNOW WHAT YOUR DOING!
 
+// Optional extra config (only if you actually use it)
 import "/./config/custom.js";
 
-var serverUrl1 = "https://parcoil-assets.onrender.com";
 var currentPageTitle = document.title;
 document.title = `${currentPageTitle} | ${sitename}`;
-let gamesData = []; 
 
+let gamesData = [];
+
+// -----------------------------
+// RENDER GAMES
+// -----------------------------
 function displayFilteredGames(filteredGames) {
   const gamesContainer = document.getElementById("gamesContainer");
-  gamesContainer.innerHTML = ""; 
+  gamesContainer.innerHTML = "";
 
   filteredGames.forEach((game) => {
     const gameDiv = document.createElement("div");
     gameDiv.classList.add("game");
 
     const gameImage = document.createElement("img");
-    gameImage.src = `${serverUrl1}/${game.url}/${game.image}`;
+
+    // ✅ LOCAL IMAGE (NO SERVER)
+    gameImage.src = game.image;
     gameImage.alt = game.name;
+
     gameImage.onclick = () => {
       window.location.href = `play.html?gameurl=${game.path}`;
     };
@@ -41,32 +47,38 @@ function displayFilteredGames(filteredGames) {
   });
 }
 
-
+// -----------------------------
+// SEARCH SYSTEM
+// -----------------------------
 function handleSearchInput() {
   const searchInputValue = document
     .getElementById("searchInput")
     .value.toLowerCase();
+
   const filteredGames = gamesData.filter((game) =>
     game.name.toLowerCase().includes(searchInputValue)
   );
+
   displayFilteredGames(filteredGames);
 }
 
-
-fetch("./config/games.json") 
+// -----------------------------
+// LOAD JSON
+// -----------------------------
+fetch("./config/games.json")
   .then((response) => response.json())
   .then((data) => {
     gamesData = data;
-    displayFilteredGames(data); 
+    displayFilteredGames(data);
   })
   .catch((error) => console.error("Error fetching games:", error));
 
-
+// -----------------------------
+// EVENTS + UI TEXT
+// -----------------------------
 document
   .getElementById("searchInput")
   .addEventListener("input", handleSearchInput);
 
-document.getElementById("title").innerHTML = `${sitename}`;
-
-document.getElementById("subtitle").innerHTML = `${subtext}`
-
+document.getElementById("title").innerHTML = sitename;
+document.getElementById("subtitle").innerHTML = subtext;
