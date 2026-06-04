@@ -1,12 +1,12 @@
-var sitename = "Phaaze Unblocked Games";
-var subtext = "v1.0";
+var sitename = "Bens Unblocked Games";
+var subtext = "v1.2";
 
-document.title = `${document.title} | ${sitename}`;
+document.title = document.title + " | " + sitename;
 
 let gamesData = [];
 
-/* RENDER GAMES */
-function displayFilteredGames(list) {
+// DISPLAY GAMES
+function displayGames(list) {
   const container = document.getElementById("gamesContainer");
   container.innerHTML = "";
 
@@ -15,60 +15,62 @@ function displayFilteredGames(list) {
     div.className = "game";
 
     const img = document.createElement("img");
-    img.src = game.image; // local image path
+    img.src = `photos/${game.image}`;
     img.alt = game.name;
 
     img.onclick = () => {
-      window.location.href = `play.html?gameurl=${game.path}`;
+      window.location.href = `play.html?game=${game.path}`;
     };
 
-    const name = document.createElement("p");
-    name.textContent = game.name;
+    const title = document.createElement("p");
+    title.textContent = game.name;
 
     div.appendChild(img);
-    div.appendChild(name);
+    div.appendChild(title);
     container.appendChild(div);
   });
 }
 
-/* SEARCH */
-function handleSearchInput() {
-  const input = document.getElementById("searchInput").value.toLowerCase();
-
-  if (!Array.isArray(gamesData)) return;
+// SEARCH
+function handleSearch() {
+  const value = document
+    .getElementById("searchInput")
+    .value
+    .toLowerCase();
 
   const filtered = gamesData.filter((g) =>
-    g.name.toLowerCase().includes(input)
+    g.name.toLowerCase().includes(value)
   );
 
-  displayFilteredGames(filtered);
+  displayGames(filtered);
 }
 
-/* LOAD JSON (SAFE) */
-fetch("./config/games.json")
-  .then((res) => res.text())
-  .then((text) => {
-    let data;
+// CATEGORY FILTER
+function filterCategory(cat) {
+  if (cat === "all") {
+    displayGames(gamesData);
+    return;
+  }
 
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      throw new Error("games.json is not valid JSON");
-    }
+  const filtered = gamesData.filter((g) => g.category === cat);
+  displayGames(filtered);
+}
 
-    if (!Array.isArray(data)) {
-      throw new Error("games.json must be an array []");
-    }
+window.filterCategory = filterCategory;
 
+// LOAD JSON
+fetch("config/games.json")
+  .then((res) => res.json())
+  .then((data) => {
     gamesData = data;
-    displayFilteredGames(data);
+    displayGames(gamesData);
   })
   .catch((err) => console.error("Error loading games.json:", err));
 
-/* EVENTS */
+// EVENTS
 document
   .getElementById("searchInput")
-  .addEventListener("input", handleSearchInput);
+  .addEventListener("input", handleSearch);
 
-document.getElementById("title").innerHTML = sitename;
-document.getElementById("subtitle").innerHTML = subtext;
+document.getElementById("title").textContent = sitename;
+document.getElementById("subtitle").textContent = subtext;
