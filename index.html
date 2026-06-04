@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
+
     <link rel="stylesheet" href="config/main.css" />
     <script src="config/main.js" type="module"></script>
   </head>
@@ -14,13 +15,13 @@
       <p id="subtitle"></p>
     </div>
 
-    <!-- CATEGORY BUTTONS (ADDED HERE) -->
-    <div class="center">
-      <button onclick="filterCategory('all')">All</button>
-      <button onclick="filterCategory('game')">Games</button>
-      <button onclick="filterCategory('tool')">Tools</button>
-      <button onclick="filterCategory('proxy')">Proxy</button>
-      <button onclick="filterCategory('link')">Links</button>
+    <!-- CATEGORY BAR -->
+    <div class="category-bar">
+      <button class="category-btn active" onclick="setCategory('all')">All</button>
+      <button class="category-btn" onclick="setCategory('game')">Games</button>
+      <button class="category-btn" onclick="setCategory('tool')">Tools</button>
+      <button class="category-btn" onclick="setCategory('proxy')">Proxies</button>
+      <button class="category-btn" onclick="setCategory('link')">Links</button>
     </div>
 
     <div class="center">
