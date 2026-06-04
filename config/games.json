@@ -1,14 +1,6 @@
-[
-  {
-    "name": "test1",
-    "image": "slope.png",
-    "path": "games/slope/index.html",
-    "new": false
-  },
-  {
-    "name": "2048",
-    "image": "2048.png",
-    "path": "games/2048/index.html",
-    "new": false
-  }
-]
+{
+  "name": "Klonoa Empire of Dreams",
+  "image": "photos/klona.jpg",
+  "path": "games/Klonoa_Empire_of_Dreams.html",
+  "new": true
+}
