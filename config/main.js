@@ -15,11 +15,13 @@ function displayGames(list) {
     div.className = "game";
 
     const img = document.createElement("img");
-    img.src = `photos/${game.image}`;
+
+    // FIX: use direct path from JSON (no double "photos/")
+    img.src = game.image;
     img.alt = game.name;
 
     img.onclick = () => {
-      window.location.href = `play.html?game=${game.path}`;
+      window.location.href = `play.html?gameurl=${game.path}`;
     };
 
     const title = document.createElement("p");
@@ -52,7 +54,10 @@ function filterCategory(cat) {
     return;
   }
 
-  const filtered = gamesData.filter((g) => g.category === cat);
+  const filtered = gamesData.filter(
+    (g) => (g.category || "game") === cat
+  );
+
   displayGames(filtered);
 }
 
