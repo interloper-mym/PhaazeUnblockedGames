@@ -1,5 +1,5 @@
 <h2 align=center> NO ONE CARES! THIS MINE NOW!
-
+i copyed this so i could use my html files but there was no templates so i made/stole this one! copy if you want.
 
 
 
