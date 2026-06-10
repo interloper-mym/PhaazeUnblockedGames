@@ -21,12 +21,13 @@
     window.location.href = "/";
   } else {
     document.getElementById("gameFrame").src = gamePath;
-  },
-  /* Leave Warning */
-window.addEventListener("beforeunload", function (e) {
-  e.preventDefault();
-  e.returnValue = "";
+  }
 
+  /* Leave Warning */
+  window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+    e.returnValue = "";
+  });
 </script>
 
 </body>
