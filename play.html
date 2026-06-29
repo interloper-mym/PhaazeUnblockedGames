@@ -14,7 +14,7 @@
 
 <script>
   const params = new URLSearchParams(window.location.search);
-  const gamePath = params.get("gameurl");
+  const gamePath = decodeURIComponent(params.get("gameurl") || "");
 
   if (!gamePath) {
     alert("No game selected");
@@ -24,10 +24,10 @@
   }
 
   window.addEventListener('beforeunload', function (event) {
-            event.preventDefault();
-            event.returnValue = '';
-            return 'Are you sure you want to leave? Any unsaved changes will be lost.';
-        });
+    event.preventDefault();
+    event.returnValue = '';
+    return 'Are you sure you want to leave? Any unsaved changes will be lost.';
+  });
 </script>
 
 </body>
