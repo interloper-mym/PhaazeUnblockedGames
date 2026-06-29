@@ -45,7 +45,8 @@ function displayGames(list) {
 
     img.onclick = () => {
       if (game.path) {
-        window.location.href = `play.html?gameurl=${game.path}`;
+        window.location.href =
+          `play.html?gameurl=${encodeURIComponent(game.path)}`;
       }
     };
 
