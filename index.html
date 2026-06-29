@@ -1,48 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
 
-    <!-- ⭐ FAVICON (ADD THIS) -->
-    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/photos/fav.png" />
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Home</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/config/main.css" />
-    <script src="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/config/main.js" type="module"></script>
-  </head>
-  <body>
-    <div class="center">
-      <h1 id="title"></h1>
-      <p id="subtitle"></p>
+	<!-- ⭐ FAVICON (ADD THIS) -->
+	<link rel="icon" type="image/png"
+		href="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/photos/fav.png" />
+
+	<link rel="stylesheet"
+		href="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/config/main.css" />
+	<script src="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/config/main.js"
+		type="module"></script>
+</head>
+
+<body>
+	<div class="center">
+		<h1 id="title"></h1>
+		<p id="subtitle"></p>
+	</div>
+
+	<div class="category-bar">
+		<button class="category-btn active" onclick="setCategory('all')">All</button>
+		<button class="category-btn" onclick="setCategory('game')">Games</button>
+		<button class="category-btn" onclick="setCategory('tool')">Tools</button>
+		<button class="category-btn" onclick="setCategory('proxy')">Proxies</button>
+		<button class="category-btn" onclick="setCategory('link')">Links</button>
+	</div>
+
+	<div class="center">
+		<input type="text" id="searchInput" placeholder="Search games" />
     </div>
 
-    <div class="category-bar">
-      <button class="category-btn active" onclick="setCategory('all')">All</button>
-      <button class="category-btn" onclick="setCategory('game')">Games</button>
-      <button class="category-btn" onclick="setCategory('tool')">Tools</button>
-      <button class="category-btn" onclick="setCategory('proxy')">Proxies</button>
-      <button class="category-btn" onclick="setCategory('link')">Links</button>
-    </div>
+		<div id="gamesContainer"></div>
 
-    <div class="center">
-      <input type="text" id="searchInput" placeholder="Search games" />
-    </div>
-
-    <div id="gamesContainer"></div>
-
-    <div class="footer">
-      <a style="font-weight: 700">a site by </a>
-      <a style="font-weight: 700" class="link" href="https://www.youtube.com/@mym_2048">
-        Mym (@mym_2048)
-      </a>
-    </div>
-        <script>
-        window.addEventListener('beforeunload', function (event) {
+		<div class="footer">
+			<a style="font-weight: 700">a site by </a>
+			<a style="font-weight: 700" class="link" href="https://www.youtube.com/@mym_2048">
+				Mym (@mym_2048)
+			</a>
+		</div>
+		<script>
+			window.addEventListener('beforeunload', function (event) {
             event.preventDefault();
             event.returnValue = '';
             return 'Are you sure you want to leave? Any unsaved changes will be lost.';
         });
-    </script>
-  </body>
+		</script>
+</body>
+
 </html>
