@@ -1,4 +1,4 @@
-<html lang="en"><head>
+<html lang="en" style="--bg: #0f1019; --surface: #1a1c2b; --surface-hover: #232540; --border: #2c2e42; --text: #f2f2f7; --muted: #9a9ab0; --accent: #7c5cff; --accent-hover: #9375ff; --splash-color: #ffff00;"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Phaaze Games</title>
@@ -12,6 +12,7 @@
     --muted: #9a9ab0;
     --accent: #7c5cff;
     --accent-hover: #9375ff;
+    --splash-color: #ffff00;
     --radius: 12px;
   }
   * { box-sizing: border-box; }
@@ -41,7 +42,7 @@
     right: -6px;
     transform: rotate(-20deg) translateX(100%);
     transform-origin: bottom left;
-    color: #ffff00;
+    color: var(--splash-color);
     text-shadow: 1.5px 1.5px 0 rgba(0,0,0,0.6);
     font-size: 0.9rem;
     font-weight: 700;
@@ -197,21 +198,21 @@
 <body>
 
 <header>
-  <h1>Phaaze Games <span id="splashText">refresh for a new splash!</span></h1>
-  <p>play something during a free period</p>
+  <h1 id="siteTitle">Phaaze Games <span id="splashText">also try alt+tab!</span></h1>
+  <p id="siteTagline">play something during a free period</p>
 </header>
 
-<div class="category-bar" id="categoryBar"></div>
+<div class="category-bar" id="categoryBar"><button class="category-btn active">All (2)</button><button class="category-btn">Game (2)</button></div>
 
 <div class="controls">
   <input type="text" id="searchInput" placeholder="Search games">
 </div>
 
-<div id="gamesContainer"><p class="empty-state">Couldn't load games.json (HTTP 404). Check GITHUB_USER/REPO/BRANCH at the top of the script, and that games.json exists in your repo.</p></div>
+<div id="gamesContainer"><div class="game-card"><img src="https://cdn.jsdelivr.net/gh/interloper-mym/PhaazeUnblockedGames@main/photos/klona.jpg" alt="Klonoa Empire of Dreams" class="game-thumb"><span class="game-name">Klonoa Empire of Dreams</span><span class="game-tag">game</span></div><div class="game-card"><span class="new-badge">NEW</span><img src="https://cdn.jsdelivr.net/gh/interloper-mym/PhaazeUnblockedGames@main/photos/Unfair-Undyne-cropped.jpg" alt="Unfaredine" class="game-thumb"><span class="game-name">Unfaredine</span><span class="game-tag">game</span></div></div>
 
-<div id="zoneViewer">
+<div id="zoneViewer" style="display: none;">
   <div class="zone-header">
-    <h2 id="zoneName">Game</h2>
+    <h2 id="zoneName">Klonoa Empire of Dreams</h2>
     <div class="zone-controls">
       <button onclick="fullscreenZone()">Fullscreen</button>
       <button onclick="newTabZone()">Open in new tab</button>
@@ -219,16 +220,54 @@
       <button onclick="closeZone()">Close</button>
     </div>
   </div>
-  <iframe id="zoneFrame" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" allow="fullscreen"></iframe>
+  <iframe id="zoneFrame" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" allow="fullscreen" srcdoc=""></iframe>
 </div>
 
 <footer>
-  Phaaze Games
+  <span id="footerSiteName">Phaaze Games</span>
   &nbsp;·&nbsp;
   <button class="footer-link-btn" onclick="downloadSite()">Download this site</button>
 </footer>
 
 <script>
+// ============================================================
+// SITE THEME — edit these to reskin the site.
+// ============================================================
+const SITE_NAME = "Phaaze Games";
+const SITE_TAGLINE = "play something during a free period";
+const THEME = {
+  bg: "#0f1019",
+  surface: "#1a1c2b",
+  surfaceHover: "#232540",
+  border: "#2c2e42",
+  text: "#f2f2f7",
+  muted: "#9a9ab0",
+  accent: "#7c5cff",
+  accentHover: "#9375ff",
+  splashColor: "#ffff00"
+};
+
+function applyTheme() {
+  const root = document.documentElement.style;
+  root.setProperty("--bg", THEME.bg);
+  root.setProperty("--surface", THEME.surface);
+  root.setProperty("--surface-hover", THEME.surfaceHover);
+  root.setProperty("--border", THEME.border);
+  root.setProperty("--text", THEME.text);
+  root.setProperty("--muted", THEME.muted);
+  root.setProperty("--accent", THEME.accent);
+  root.setProperty("--accent-hover", THEME.accentHover);
+  document.documentElement.style.setProperty("--splash-color", THEME.splashColor);
+
+  document.title = SITE_NAME;
+  const titleEl = document.getElementById("siteTitle");
+  const taglineEl = document.getElementById("siteTagline");
+  if (titleEl) titleEl.firstChild.textContent = SITE_NAME + " ";
+  if (taglineEl) taglineEl.textContent = SITE_TAGLINE;
+  const footerNameEl = document.getElementById("footerSiteName");
+  if (footerNameEl) footerNameEl.textContent = SITE_NAME;
+}
+
 // ============================================================
 // GITHUB REPO SETTINGS
 // Games/photos/games.json are all pulled live from this repo via
@@ -456,25 +495,31 @@ function downloadGame() {
     alert("Still loading — try again in a second.");
     return;
   }
-  const blob = new Blob([lastGameHtml], { type: "text/html;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = lastGameName.replace(/[^a-z0-9\-_ ]/gi, "_") + ".html";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  triggerDownload(lastGameHtml, lastGameName.replace(/[^a-z0-9\-_ ]/gi, "_") + ".html", "text/html;charset=utf-8");
 }
 
-function downloadSite() {
-  if (zoneViewer.style.display === "flex") closeZone();
-  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+async function downloadSite() {
+  try {
+    const res = await fetch(location.href.split("?")[0] + "?t=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const html = await res.text();
+    triggerDownload(html, "phaaze-games.html", "text/html;charset=utf-8");
+  } catch (err) {
+    // Fallback: serialize the live page, but make sure no game is
+    // sitting loaded in the viewer first (that would bake its full
+    // HTML into the download as one giant attribute).
+    if (zoneViewer.style.display === "flex") closeZone();
+    const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    triggerDownload(html, "phaaze-games.html", "text/html;charset=utf-8");
+  }
+}
+
+function triggerDownload(content, filename, mime) {
+  const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "phaaze-games.html";
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -489,6 +534,7 @@ searchInput.addEventListener("input", e => {
   render();
 });
 
+applyTheme();
 showSplashText();
 loadGamesList();
 </script>
