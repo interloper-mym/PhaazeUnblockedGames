@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Klonoa Empire of Dreams",
+    "image": "photos/klona.jpg",
+    "path": "games/Klonoa_Empire_of_Dreams.html",
+    "new": false,
+    "category": "game"
+  },
+  {
+    "name": "Unfaredine",
+    "image": "photos/Unfair-Undyne-cropped.jpg",
+    "path": "games/NGAHHHsim.html",
+    "new": true,
+    "category": "game"
+  }
+]
