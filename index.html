@@ -1,6 +1,8 @@
-<html lang="en" style="--bg: #0f1019; --surface: #1a1c2b; --surface-hover: #232540; --border: #2c2e42; --text: #f2f2f7; --muted: #9a9ab0; --accent: #7c5cff; --accent-hover: #9375ff; --splash-color: #ffff00;"><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Phaaze Games</title>
 <style>
   :root {
@@ -198,21 +200,21 @@
 <body>
 
 <header>
-  <h1 id="siteTitle">Phaaze Games <span id="splashText">also try alt+tab!</span></h1>
+  <h1 id="siteTitle">Phaaze Games <span id="splashText"></span></h1>
   <p id="siteTagline">play something during a free period</p>
 </header>
 
-<div class="category-bar" id="categoryBar"><button class="category-btn active">All (2)</button><button class="category-btn">Game (2)</button></div>
+<div class="category-bar" id="categoryBar"></div>
 
 <div class="controls">
-  <input type="text" id="searchInput" placeholder="Search games">
+  <input type="text" id="searchInput" placeholder="Search games" />
 </div>
 
-<div id="gamesContainer"><div class="game-card"><img src="https://cdn.jsdelivr.net/gh/interloper-mym/PhaazeUnblockedGames@main/photos/klona.jpg" alt="Klonoa Empire of Dreams" class="game-thumb"><span class="game-name">Klonoa Empire of Dreams</span><span class="game-tag">game</span></div><div class="game-card"><span class="new-badge">NEW</span><img src="https://cdn.jsdelivr.net/gh/interloper-mym/PhaazeUnblockedGames@main/photos/Unfair-Undyne-cropped.jpg" alt="Unfaredine" class="game-thumb"><span class="game-name">Unfaredine</span><span class="game-tag">game</span></div></div>
+<div id="gamesContainer">Loading…</div>
 
-<div id="zoneViewer" style="display: none;">
+<div id="zoneViewer">
   <div class="zone-header">
-    <h2 id="zoneName">Klonoa Empire of Dreams</h2>
+    <h2 id="zoneName">Game</h2>
     <div class="zone-controls">
       <button onclick="fullscreenZone()">Fullscreen</button>
       <button onclick="newTabZone()">Open in new tab</button>
@@ -220,7 +222,7 @@
       <button onclick="closeZone()">Close</button>
     </div>
   </div>
-  <iframe id="zoneFrame" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" allow="fullscreen" srcdoc=""></iframe>
+  <iframe id="zoneFrame" allowfullscreen webkitallowfullscreen mozallowfullscreen allow="fullscreen"></iframe>
 </div>
 
 <footer>
@@ -286,14 +288,14 @@ const CDN_BASE = `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${GI
 // SPLASH TEXT — random tagline shown next to the title.
 // ============================================================
 const splashes = [
-  "100% free period approved!",
-  "now with extra pixels!",
-  "also try alt+tab!",
-  "student powered!",
-  "no download required!",
-  "may contain high scores!",
-  "ctrl+w is your friend!",
-  "refresh for a new splash!"
+  "100% PAIN!",
+  "now with extra buttons-o-doom!",
+  "ctr+shift+q+q your self NOW",
+  "securly can suck it",
+  "bitch we got singlefile",
+  "we be using ai",
+  "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "furrys are... somthing?"
 ];
 
 // ============================================================
@@ -538,6 +540,5 @@ applyTheme();
 showSplashText();
 loadGamesList();
 </script>
-
-
-</body></html>
+</body>
+</html>
