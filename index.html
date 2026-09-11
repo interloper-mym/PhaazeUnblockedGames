@@ -1,54 +1,497 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phaaze Games</title>
+<style>
+  :root {
+    --bg: #0f1019;
+    --surface: #1a1c2b;
+    --surface-hover: #232540;
+    --border: #2c2e42;
+    --text: #f2f2f7;
+    --muted: #9a9ab0;
+    --accent: #7c5cff;
+    --accent-hover: #9375ff;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    padding-bottom: 70px;
+  }
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Home</title>
+  header { padding: 28px 16px 12px; text-align: center; }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    position: relative;
+    display: inline-block;
+  }
+  header p { margin: 0; color: var(--muted); }
 
-	<!-- ⭐ FAVICON (ADD THIS) -->
-	<link rel="icon" type="image/png"
-		href="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/photos/fav.png" />
+  #splashText {
+    position: absolute;
+    top: -14px;
+    right: -6px;
+    transform: rotate(-20deg) translateX(100%);
+    transform-origin: bottom left;
+    color: #ffff00;
+    text-shadow: 1.5px 1.5px 0 rgba(0,0,0,0.6);
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-style: italic;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: splash-bounce 0.7s infinite alternate ease-in-out;
+  }
+  @keyframes splash-bounce {
+    from { transform: rotate(-20deg) translateX(100%) scale(1); }
+    to   { transform: rotate(-20deg) translateX(100%) scale(1.12); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #splashText { animation: none; }
+  }
 
-	<link rel="stylesheet"
-		href="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/config/main.css" />
-	<script src="https://cdn.jsdelivr.net/gh/Entraptadoeztechnology/PhaazeGames@refs/heads/main/config/main.js"
-		type="module"></script>
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    max-width: 700px;
+    margin: 20px auto 0;
+    padding: 0 16px;
+  }
+  #searchInput {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+  #searchInput:focus { outline: none; border-color: var(--accent); }
+
+  .category-bar {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 18px 0 0;
+  }
+  .category-btn {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .category-btn:hover { border-color: var(--accent); }
+  .category-btn.active { background: var(--accent); border-color: var(--accent); }
+
+  #gamesContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    max-width: 1000px;
+    margin: 32px auto;
+    padding: 0 24px;
+  }
+  .game-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+  }
+  .game-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .new-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--accent);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+  .game-thumb {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: #0a0a12;
+  }
+  .game-name { font-weight: 600; font-size: 0.95rem; text-align: center; }
+  .game-tag { margin-top: 6px; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .empty-state { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px 0; }
+
+  #zoneViewer {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+  }
+  .zone-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  #zoneName { margin: 0; font-size: 1.1rem; font-weight: 700; }
+  .zone-controls { display: flex; gap: 8px; }
+  .zone-controls button {
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .zone-controls button:hover { border-color: var(--accent); }
+  #zoneFrame { flex-grow: 1; border: none; width: 100%; }
+
+  footer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: rgba(0,0,0,0.3);
+  }
+  .footer-link-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-decoration: underline;
+    padding: 0;
+  }
+</style>
 </head>
-
 <body>
-	<div class="center">
-		<h1 id="title"></h1>
-		<p id="subtitle"></p>
-	</div>
 
-	<div class="category-bar">
-		<button class="category-btn active" onclick="setCategory('all')">All</button>
-		<button class="category-btn" onclick="setCategory('game')">Games</button>
-		<button class="category-btn" onclick="setCategory('tool')">Tools</button>
-		<button class="category-btn" onclick="setCategory('proxy')">Proxies</button>
-		<button class="category-btn" onclick="setCategory('link')">Links</button>
-	</div>
+<header>
+  <h1>Phaaze Games <span id="splashText">refresh for a new splash!</span></h1>
+  <p>play something during a free period</p>
+</header>
 
-	<div class="center">
-		<input type="text" id="searchInput" placeholder="Search games" />
+<div class="category-bar" id="categoryBar"></div>
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder="Search games">
+</div>
+
+<div id="gamesContainer"><p class="empty-state">Couldn't load games.json (HTTP 404). Check GITHUB_USER/REPO/BRANCH at the top of the script, and that games.json exists in your repo.</p></div>
+
+<div id="zoneViewer">
+  <div class="zone-header">
+    <h2 id="zoneName">Game</h2>
+    <div class="zone-controls">
+      <button onclick="fullscreenZone()">Fullscreen</button>
+      <button onclick="newTabZone()">Open in new tab</button>
+      <button onclick="downloadGame()">Download</button>
+      <button onclick="closeZone()">Close</button>
     </div>
+  </div>
+  <iframe id="zoneFrame" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen="" allow="fullscreen"></iframe>
+</div>
 
-		<div id="gamesContainer"></div>
+<footer>
+  Phaaze Games
+  &nbsp;·&nbsp;
+  <button class="footer-link-btn" onclick="downloadSite()">Download this site</button>
+</footer>
 
-		<div class="footer">
-			<a style="font-weight: 700">a site by </a>
-			<a style="font-weight: 700" class="link" href="https://www.youtube.com/@mym_2048">
-				Mym (@mym_2048)
-			</a>
-		</div>
-		<script>
-			window.addEventListener('beforeunload', function (event) {
-            event.preventDefault();
-            event.returnValue = '';
-            return 'Are you sure you want to leave? Any unsaved changes will be lost.';
-        });
-		</script>
-</body>
+<script>
+// ============================================================
+// GITHUB REPO SETTINGS
+// Games/photos/games.json are all pulled live from this repo via
+// jsDelivr — update those files on GitHub and this HTML never
+// needs to change.
+//
+// jsDelivr caches @main for up to 24h. After pushing changes,
+// purge instantly at: https://www.jsdelivr.com/tools/purge
+// ============================================================
+const GITHUB_USER = "interloper-mym";
+const GITHUB_REPO = "PhaazeUnblockedGames";
+const GITHUB_BRANCH = "main";
+const CDN_BASE = `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${GITHUB_BRANCH}/`;
 
-</html>
+// ============================================================
+// SPLASH TEXT — random tagline shown next to the title.
+// ============================================================
+const splashes = [
+  "100% free period approved!",
+  "now with extra pixels!",
+  "also try alt+tab!",
+  "student powered!",
+  "no download required!",
+  "may contain high scores!",
+  "ctrl+w is your friend!",
+  "refresh for a new splash!"
+];
+
+// ============================================================
+// State
+// ============================================================
+let items = [];
+let currentCategory = "all";
+let currentSearch = "";
+let lastGameUrl = null;
+let lastGameName = null;
+let lastGameHtml = null;
+
+const container = document.getElementById("gamesContainer");
+const searchInput = document.getElementById("searchInput");
+const categoryBar = document.getElementById("categoryBar");
+const zoneViewer = document.getElementById("zoneViewer");
+const zoneFrame = document.getElementById("zoneFrame");
+const zoneName = document.getElementById("zoneName");
+
+function resolveUrl(path) {
+  if (/^https?:\/\//i.test(path)) return path;
+  return CDN_BASE + path;
+}
+
+function showSplashText() {
+  const el = document.getElementById("splashText");
+  if (el) el.textContent = splashes[Math.floor(Math.random() * splashes.length)];
+}
+
+// ============================================================
+// Loading the games list from games.json in the repo
+// ============================================================
+async function loadGamesList() {
+  container.innerHTML = "Loading games…";
+  try {
+    const res = await fetch(CDN_BASE + "games.json?t=" + Date.now());
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    items = await res.json();
+  } catch (err) {
+    container.innerHTML =
+      '<p class="empty-state">Couldn\'t load games.json (' +
+      String(err.message).replace(/</g, "&lt;") +
+      "). Check GITHUB_USER/REPO/BRANCH at the top of the script, and that games.json exists in your repo.</p>";
+    return;
+  }
+  buildCategoryBar();
+  render();
+}
+
+// ============================================================
+// Category bar + search + card rendering
+// ============================================================
+function buildCategoryBar() {
+  const cats = ["all", ...new Set(items.map(i => i.category))];
+  categoryBar.innerHTML = "";
+  cats.forEach(cat => {
+    const count = cat === "all" ? items.length : items.filter(i => i.category === cat).length;
+    const btn = document.createElement("button");
+    btn.className = "category-btn" + (cat === "all" ? " active" : "");
+    const label = cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1);
+    btn.textContent = `${label} (${count})`;
+    btn.onclick = () => {
+      currentCategory = cat;
+      document.querySelectorAll(".category-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      render();
+    };
+    categoryBar.appendChild(btn);
+  });
+}
+
+function render() {
+  const filtered = items.filter(item => {
+    const matchesCategory = currentCategory === "all" || item.category === currentCategory;
+    const matchesSearch = item.name.toLowerCase().includes(currentSearch.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  container.innerHTML = "";
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p class="empty-state">Nothing here yet.</p>';
+    return;
+  }
+
+  filtered.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "game-card";
+    card.onclick = () => openZone(item);
+
+    if (item.new) {
+      const badge = document.createElement("span");
+      badge.className = "new-badge";
+      badge.textContent = "NEW";
+      card.appendChild(badge);
+    }
+
+    if (item.image) {
+      const img = document.createElement("img");
+      img.src = resolveUrl(item.image);
+      img.alt = item.name;
+      img.className = "game-thumb";
+      img.onerror = () => { img.style.display = "none"; };
+      card.appendChild(img);
+    }
+
+    const label = document.createElement("span");
+    label.className = "game-name";
+    label.textContent = item.name;
+    card.appendChild(label);
+
+    const tag = document.createElement("span");
+    tag.className = "game-tag";
+    tag.textContent = item.category;
+    card.appendChild(tag);
+
+    container.appendChild(card);
+  });
+}
+
+// ============================================================
+// Game viewer — fetches the game HTML itself and injects it via
+// srcdoc (avoids CDN content-type issues), with a <base> tag so
+// any relative asset paths in the game still resolve correctly.
+// ============================================================
+function injectBaseTag(html, baseUrl) {
+  if (/<head[^>]*>/i.test(html)) {
+    return html.replace(/<head[^>]*>/i, match => match + `<base href="${baseUrl}">`);
+  }
+  return `<base href="${baseUrl}">` + html;
+}
+
+function loadingMessage(text) {
+  return `<body style="background:#0f1019;color:#9a9ab0;font-family:sans-serif;` +
+    `display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">${text}</body>`;
+}
+
+function openZone(item) {
+  if (item.category === "link" || /^https?:\/\//i.test(item.path)) {
+    window.open(resolveUrl(item.path), "_blank");
+    return;
+  }
+
+  const resolved = resolveUrl(item.path);
+  lastGameUrl = resolved;
+  lastGameName = item.name;
+  lastGameHtml = null;
+  zoneName.textContent = item.name;
+  zoneFrame.srcdoc = loadingMessage("Loading…");
+  zoneViewer.style.display = "flex";
+
+  fetch(resolved + "?t=" + Date.now())
+    .then(res => {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.text();
+    })
+    .then(html => {
+      lastGameHtml = injectBaseTag(html, resolved);
+      zoneFrame.srcdoc = lastGameHtml;
+    })
+    .catch(err => {
+      zoneFrame.srcdoc = loadingMessage(
+        "Couldn't load this game (" + String(err.message).replace(/</g, "&lt;") + ")"
+      );
+    });
+}
+
+function closeZone() {
+  zoneViewer.style.display = "none";
+  zoneFrame.srcdoc = "";
+  lastGameUrl = null;
+  lastGameName = null;
+  lastGameHtml = null;
+}
+
+function fullscreenZone() {
+  const req = zoneFrame.requestFullscreen
+    || zoneFrame.webkitRequestFullscreen
+    || zoneFrame.mozRequestFullScreen
+    || zoneFrame.msRequestFullscreen;
+  if (req) req.call(zoneFrame);
+}
+
+function newTabZone() {
+  if (!lastGameHtml) {
+    alert("Still loading — try again in a second.");
+    return;
+  }
+  const w = window.open("about:blank", "_blank");
+  if (w) {
+    w.document.open();
+    w.document.write(lastGameHtml);
+    w.document.close();
+  }
+}
+
+function downloadGame() {
+  if (!lastGameHtml || !lastGameName) {
+    alert("Still loading — try again in a second.");
+    return;
+  }
+  const blob = new Blob([lastGameHtml], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = lastGameName.replace(/[^a-z0-9\-_ ]/gi, "_") + ".html";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function downloadSite() {
+  if (zoneViewer.style.display === "flex") closeZone();
+  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "phaaze-games.html";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// Wire up + start
+// ============================================================
+searchInput.addEventListener("input", e => {
+  currentSearch = e.target.value;
+  render();
+});
+
+showSplashText();
+loadGamesList();
+</script>
+
+
+</body></html>
