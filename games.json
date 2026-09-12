@@ -13,16 +13,16 @@
     "new": true,
     "category": "game"
   },
-{
-  "name": "RUINS",
-  "image": "https://image2url.com/r2/default/images/1771619449789-5ff2b5d9-9502-49b9-911d-402e07f74ff0.png",
-  "path": "games/RUINS.html",
-  "new": true,
-  "category": "proxy"
-},
+  {
+    "name": "RUINS",
+    "image": "https://image2url.com/r2/default/images/1771619449789-5ff2b5d9-9502-49b9-911d-402e07f74ff0.png",
+    "path": "games/RUINS.html",
+    "new": true,
+    "category": "proxy"
+  },
   {
     "name": "Wakfu Mini",
-    "image": "photos/wakfu.jpg",
+    "image": "photos/nox__wakfu__render_by_trowo2_dg8n8se-fullview.png",
     "path": "games/wakfumini.html",
     "new": true,
     "category": "proxy"
