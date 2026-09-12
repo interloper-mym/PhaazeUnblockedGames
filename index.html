@@ -176,7 +176,7 @@
     font-size: 0.85rem;
   }
   .zone-controls button:hover { border-color: var(--accent); }
-  #zoneFrame { flex-grow: 1; border: none; width: 100%; }
+  #zoneFrame { flex-grow: 1; border: none; width: 100%; height: 100%; }
   #zoneLoading {
     position: absolute;
     inset: 0;
@@ -231,7 +231,6 @@
     <div class="zone-controls">
       <button onclick="fullscreenZone()">Fullscreen</button>
       <button onclick="newTabZone()">Open in new tab</button>
-      <button onclick="downloadGame()">Download</button>
       <button onclick="closeZone()">Close</button>
     </div>
   </div>
@@ -249,7 +248,7 @@
 
 <script>
 // ============================================================
-// SITE THEME — edit these to reskin the site.
+// SITE THEME
 // ============================================================
 const SITE_NAME = "Phaaze Games";
 const SITE_TAGLINE = "play something during a free period";
@@ -288,20 +287,16 @@ function applyTheme() {
 
 // ============================================================
 // GITHUB REPO SETTINGS
-// Games/photos/games.json are all pulled live from this repo via
-// jsDelivr — update those files on GitHub and this HTML never
-// needs to change.
-//
-// jsDelivr caches @main for up to 24h. After pushing changes,
-// purge instantly at: https://www.jsdelivr.com/tools/purge
+// GitHub Pages serves .html as text/html (unlike jsDelivr which
+// sometimes serves text/plain), so games render instead of
+// showing as code. Also fixes Klonoa's black screen via CORS.
 // ============================================================
 const GITHUB_USER = "interloper-mym";
 const GITHUB_REPO = "PhaazeUnblockedGames";
-const GITHUB_BRANCH = "main";
-const CDN_BASE = `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${GITHUB_BRANCH}/`;
+const CDN_BASE = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/`;
 
 // ============================================================
-// SPLASH TEXT — random tagline shown next to the title.
+// SPLASH TEXT
 // ============================================================
 const splashes = [
   "Off to go hang myself!",
@@ -343,7 +338,7 @@ function showSplashText() {
 }
 
 // ============================================================
-// Loading the games list from games.json in the repo
+// Load games.json
 // ============================================================
 async function loadGamesList() {
   container.innerHTML = "Loading games…";
@@ -355,7 +350,7 @@ async function loadGamesList() {
     container.innerHTML =
       '<p class="empty-state">Couldn\'t load games.json (' +
       String(err.message).replace(/</g, "&lt;") +
-      "). Check GITHUB_USER/REPO/BRANCH at the top of the script, and that games.json exists in your repo.</p>";
+      "). Check GITHUB_USER/REPO at the top of the script, and that games.json exists in your repo.</p>";
     return;
   }
   buildCategoryBar();
@@ -363,7 +358,7 @@ async function loadGamesList() {
 }
 
 // ============================================================
-// Category bar + search + card rendering
+// Category bar + search + cards
 // ============================================================
 function buildCategoryBar() {
   const cats = ["all", ...new Set(items.map(i => i.category))];
@@ -434,29 +429,12 @@ function render() {
 }
 
 // ============================================================
-// Game viewer — fetches the game HTML itself and injects it via
-// srcdoc (avoids CDN content-type issues), with a <base> tag so
-// any relative asset paths in the game still resolve correctly.
+// Game viewer
+// The iframe uses direct src (so Klonoa's emulator runs on
+// GitHub Pages' origin and its ROM fetch is CORS-clean).
+// We ALSO fetch the HTML in the background so the "Open in new
+// tab" button can write it into an about:blank window.
 // ============================================================
-function injectBaseTag(html, baseUrl) {
-  if (/<head[^>]*>/i.test(html)) {
-    return html.replace(/<head[^>]*>/i, match => match + `<base href="${baseUrl}">`);
-  }
-  return `<base href="${baseUrl}">` + html;
-}
-
-function loadingMessage(text) {
-  return `<body style="background:#0f1019;color:#9a9ab0;font-family:sans-serif;` +
-    `display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">${text}</body>`;
-}
-
-function writeIntoFrame(html) {
-  const frameDoc = zoneFrame.contentDocument || zoneFrame.contentWindow.document;
-  frameDoc.open();
-  frameDoc.write(html);
-  frameDoc.close();
-}
-
 function openZone(item) {
   if (item.category === "link" || /^https?:\/\//i.test(item.path)) {
     window.open(resolveUrl(item.path), "_blank");
@@ -464,58 +442,22 @@ function openZone(item) {
   }
 
   const resolved = resolveUrl(item.path);
-  const isLocalFile = location.protocol === "file:";
   lastGameUrl = resolved;
   lastGameName = item.name;
   lastGameHtml = null;
 
-  // On file:// there's no way to embed a working game inside this page
-  // (browsers block that for security reasons) — so open a real new tab
-  // instead, which works fine everywhere including file://.
-  let newTab = null;
-  if (isLocalFile) {
-    newTab = window.open("", "_blank");
-  } else {
-    zoneName.textContent = item.name;
-    zoneLoading.style.display = "flex";
-    zoneLoading.textContent = "Loading…";
-    writeIntoFrame(loadingMessage("Loading…"));
-    zoneViewer.style.display = "flex";
-  }
+  zoneName.textContent = item.name;
+  zoneLoading.style.display = "flex";
+  zoneLoading.textContent = "Loading…";
+  zoneViewer.style.display = "flex";
+
+  zoneFrame.onload = () => { zoneLoading.style.display = "none"; };
+  zoneFrame.src = resolved;
 
   fetch(resolved + "?t=" + Date.now())
-    .then(res => {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.text();
-    })
-    .then(html => {
-      lastGameHtml = injectBaseTag(html, resolved);
-      if (isLocalFile) {
-        if (newTab) {
-          newTab.document.open();
-          newTab.document.write(lastGameHtml);
-          newTab.document.close();
-        } else {
-          alert("Your browser blocked the popup — allow popups for this page and try again.");
-        }
-      } else {
-        writeIntoFrame(lastGameHtml);
-        zoneLoading.style.display = "none";
-      }
-    })
-    .catch(err => {
-      const msg = "Couldn't load this game (" + String(err.message).replace(/</g, "&lt;") + ")";
-      if (isLocalFile) {
-        if (newTab) {
-          newTab.document.open();
-          newTab.document.write(loadingMessage(msg));
-          newTab.document.close();
-        }
-      } else {
-        writeIntoFrame(loadingMessage(msg));
-        zoneLoading.style.display = "none";
-      }
-    });
+    .then(res => res.ok ? res.text() : Promise.reject(new Error("HTTP " + res.status)))
+    .then(html => { lastGameHtml = html; })
+    .catch(() => { lastGameHtml = null; });
 }
 
 function closeZone() {
@@ -544,15 +486,9 @@ function newTabZone() {
     w.document.open();
     w.document.write(lastGameHtml);
     w.document.close();
+  } else {
+    alert("Your browser blocked the popup — allow popups for this site and try again.");
   }
-}
-
-function downloadGame() {
-  if (!lastGameHtml || !lastGameName) {
-    alert("Still loading — try again in a second.");
-    return;
-  }
-  triggerDownload(lastGameHtml, lastGameName.replace(/[^a-z0-9\-_ ]/gi, "_") + ".html", "text/html;charset=utf-8");
 }
 
 async function downloadSite() {
@@ -562,9 +498,6 @@ async function downloadSite() {
     const html = await res.text();
     triggerDownload(html, "phaaze-games.html", "text/html;charset=utf-8");
   } catch (err) {
-    // Fallback: serialize the live page, but make sure no game is
-    // sitting loaded in the viewer first (that would bake its full
-    // HTML into the download as one giant attribute).
     if (zoneViewer.style.display === "flex") closeZone();
     const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
     triggerDownload(html, "phaaze-games.html", "text/html;charset=utf-8");
