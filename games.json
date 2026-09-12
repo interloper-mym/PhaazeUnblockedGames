@@ -26,5 +26,145 @@
     "path": "games/wakfumini.html",
     "new": true,
     "category": "proxy"
+  },
+  {
+    "name": "BERGENTRUCK 201X",
+    "image": "photos/bergentruck.jpg",
+    "path": "games/BERGENTRUCK 201x.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "ClusterTruck",
+    "image": "photos/clustertruck.jpg",
+    "path": "games/ClusterTruck.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Cookie Clicker",
+    "image": "photos/cookieclicker.jpg",
+    "path": "games/Cookie Clicker.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Endacopia",
+    "image": "photos/endacopia.jpg",
+    "path": "games/ENDACOPIA.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "FNF: VS. Seek's Cool Deltarune",
+    "image": "photos/fnfseek.jpg",
+    "path": "games/Friday Night Funkin': VS. Seek's Cool Deltarune.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Half Life",
+    "image": "photos/halflife.jpg",
+    "path": "games/Half Life.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Hollow Knight",
+    "image": "photos/hollowknight.jpg",
+    "path": "games/Hollow Knight.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Hollow Knight: Silksong",
+    "image": "photos/silksong.jpg",
+    "path": "games/Hollow Knight: Silksong.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Little Runmo",
+    "image": "photos/littlerunmo.jpg",
+    "path": "games/Little Runmo.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Ragdoll Archers",
+    "image": "photos/ragdollarchers.jpg",
+    "path": "games/Ragdoll Archers.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Raldi's Crackhouse",
+    "image": "photos/raldi.jpg",
+    "path": "games/Raldi's Crackhouse.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "VS Rewrite: ROUND 2",
+    "image": "photos/vsrewrite.jpg",
+    "path": "games/VS Rewrite: ROUND 2.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Bad Time Simulator",
+    "image": "photos/badtimesim.jpg",
+    "path": "games/badtimesim.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "EmulatorJS",
+    "image": "photos/emujs.jpg",
+    "path": "games/emujs.html",
+    "new": true,
+    "category": "proxy"
+  },
+  {
+    "name": "FISH",
+    "image": "photos/fish.jpg",
+    "path": "games/fish.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Geometry Dash Web",
+    "image": "photos/gdweb.jpg",
+    "path": "games/gdweb.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "GTA III",
+    "image": "photos/gta3.jpg",
+    "path": "games/gta3.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Minecraft 1.12.2",
+    "image": "photos/mc1122.jpg",
+    "path": "games/mc1.12.2.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Ruffle Player",
+    "image": "photos/ruffle.jpg",
+    "path": "games/ruffle.html",
+    "new": true,
+    "category": "proxy"
+  },
+  {
+    "name": "Super Monkey Ball 1 & 2",
+    "image": "photos/smb.jpg",
+    "path": "games/smb.html",
+    "new": true,
+    "category": "game"
   }
 ]
