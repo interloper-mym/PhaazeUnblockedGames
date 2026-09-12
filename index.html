@@ -1,253 +1,340 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Phaaze Games</title>
-<style>
-  :root {
-    --bg: #0f1019;
-    --surface: #1a1c2b;
-    --surface-hover: #232540;
-    --border: #2c2e42;
-    --text: #f2f2f7;
-    --muted: #9a9ab0;
-    --accent: #7c5cff;
-    --accent-hover: #9375ff;
-    --splash-color: #ffff00;
-    --radius: 12px;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
-    padding-bottom: 70px;
-  }
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Phaaze Games</title>
+	<style>
+		:root {
+			--bg: #0f1019;
+			--surface: #1a1c2b;
+			--surface-hover: #232540;
+			--border: #2c2e42;
+			--text: #f2f2f7;
+			--muted: #9a9ab0;
+			--accent: #7c5cff;
+			--accent-hover: #9375ff;
+			--splash-color: #ffff00;
+			--radius: 12px;
+		}
 
-  header { padding: 28px 16px 12px; text-align: center; }
-  header h1 {
-    margin: 0 0 4px;
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    position: relative;
-    display: inline-block;
-  }
-  header p { margin: 0; color: var(--muted); }
+		* {
+			box-sizing: border-box;
+		}
 
-  #splashText {
-    position: absolute;
-    top: 38px;
-    left: 100%;
-    margin-left: 10px;
-    transform: rotate(-20deg);
-    transform-origin: bottom left;
-    color: var(--splash-color);
-    text-shadow: 1.5px 1.5px 0 rgba(0,0,0,0.6);
-    font-size: 0.9rem;
-    font-weight: 700;
-    font-style: italic;
-    white-space: nowrap;
-    pointer-events: none;
-    animation: splash-bounce 0.7s infinite alternate ease-in-out;
-  }
-  @keyframes splash-bounce {
-    from { transform: rotate(-20deg) scale(1); }
-    to   { transform: rotate(-20deg) scale(1.12); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    #splashText { animation: none; }
-  }
+		body {
+			margin: 0;
+			min-height: 100vh;
+			background: var(--bg);
+			color: var(--text);
+			font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+			padding-bottom: 70px;
+		}
 
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    max-width: 700px;
-    margin: 20px auto 0;
-    padding: 0 16px;
-  }
-  #searchInput {
-    flex: 1;
-    min-width: 180px;
-    padding: 10px 14px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 0.95rem;
-  }
-  #searchInput:focus { outline: none; border-color: var(--accent); }
+		header {
+			padding: 28px 16px 12px;
+			text-align: center;
+		}
 
-  .category-bar {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 18px 0 0;
-  }
-  .category-btn {
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 8px 18px;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-  .category-btn:hover { border-color: var(--accent); }
-  .category-btn.active { background: var(--accent); border-color: var(--accent); }
+		header h1 {
+			margin: 0 0 4px;
+			font-size: 2rem;
+			font-weight: 700;
+			letter-spacing: -0.01em;
+			position: relative;
+			display: inline-block;
+		}
 
-  #gamesContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-    max-width: 1000px;
-    margin: 32px auto;
-    padding: 0 24px;
-  }
-  .game-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    transition: transform 0.12s ease, border-color 0.12s ease;
-  }
-  .game-card:hover { transform: translateY(-3px); border-color: var(--accent); }
-  .new-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: var(--accent);
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    padding: 2px 7px;
-    border-radius: 999px;
-  }
-  .game-thumb {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background: #0a0a12;
-  }
-  .game-name { font-weight: 600; font-size: 0.95rem; text-align: center; }
-  .game-tag { margin-top: 6px; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-  .empty-state { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px 0; }
+		header p {
+			margin: 0;
+			color: var(--muted);
+		}
 
-  #zoneViewer {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    z-index: 1000;
-    display: none;
-    flex-direction: column;
-  }
-  .zone-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  #zoneName { margin: 0; font-size: 1.1rem; font-weight: 700; }
-  .zone-controls { display: flex; gap: 8px; }
-  .zone-controls button {
-    background: var(--surface-hover);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.85rem;
-  }
-  .zone-controls button:hover { border-color: var(--accent); }
-  #zoneFrame { flex-grow: 1; border: none; width: 100%; height: 100%; }
-  #zoneLoading {
-    position: absolute;
-    inset: 0;
-    top: 57px;
-    background: var(--bg);
-    color: var(--muted);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-family: inherit;
-    z-index: 1;
-  }
+		#splashText {
+			position: absolute;
+			top: 38px;
+			left: 100%;
+			margin-left: 10px;
+			transform: rotate(-20deg);
+			transform-origin: bottom left;
+			color: var(--splash-color);
+			text-shadow: 1.5px 1.5px 0 rgba(0, 0, 0, 0.6);
+			font-size: 0.9rem;
+			font-weight: 700;
+			font-style: italic;
+			white-space: nowrap;
+			pointer-events: none;
+			animation: splash-bounce 0.7s infinite alternate ease-in-out;
+		}
 
-  footer {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    text-align: center;
-    padding: 10px;
-    font-size: 0.8rem;
-    color: var(--muted);
-    background: rgba(0,0,0,0.3);
-  }
-  .footer-link-btn {
-    background: none;
-    border: none;
-    color: var(--accent);
-    cursor: pointer;
-    font-size: 0.8rem;
-    text-decoration: underline;
-    padding: 0;
-  }
-</style>
+		@keyframes splash-bounce {
+			from {
+				transform: rotate(-20deg) scale(1);
+			}
+
+			to {
+				transform: rotate(-20deg) scale(1.12);
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			#splashText {
+				animation: none;
+			}
+		}
+
+		.controls {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			justify-content: center;
+			max-width: 700px;
+			margin: 20px auto 0;
+			padding: 0 16px;
+		}
+
+		#searchInput {
+			flex: 1;
+			min-width: 180px;
+			padding: 10px 14px;
+			border-radius: var(--radius);
+			border: 1px solid var(--border);
+			background: var(--surface);
+			color: var(--text);
+			font-size: 0.95rem;
+		}
+
+		#searchInput:focus {
+			outline: none;
+			border-color: var(--accent);
+		}
+
+		.category-bar {
+			display: flex;
+			justify-content: center;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin: 18px 0 0;
+		}
+
+		.category-btn {
+			background: var(--surface);
+			color: var(--text);
+			border: 1px solid var(--border);
+			border-radius: 999px;
+			padding: 8px 18px;
+			font-size: 0.9rem;
+			cursor: pointer;
+		}
+
+		.category-btn:hover {
+			border-color: var(--accent);
+		}
+
+		.category-btn.active {
+			background: var(--accent);
+			border-color: var(--accent);
+		}
+
+		#gamesContainer {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+			gap: 16px;
+			max-width: 1000px;
+			margin: 32px auto;
+			padding: 0 24px;
+		}
+
+		.game-card {
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			padding: 14px;
+			cursor: pointer;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			position: relative;
+			transition: transform 0.12s ease, border-color 0.12s ease;
+		}
+
+		.game-card:hover {
+			transform: translateY(-3px);
+			border-color: var(--accent);
+		}
+
+		.new-badge {
+			position: absolute;
+			top: 8px;
+			right: 8px;
+			background: var(--accent);
+			color: white;
+			font-size: 0.65rem;
+			font-weight: 700;
+			letter-spacing: 0.04em;
+			padding: 2px 7px;
+			border-radius: 999px;
+		}
+
+		.game-thumb {
+			width: 100%;
+			aspect-ratio: 4 / 3;
+			object-fit: cover;
+			border-radius: 8px;
+			margin-bottom: 10px;
+			background: #0a0a12;
+		}
+
+		.game-name {
+			font-weight: 600;
+			font-size: 0.95rem;
+			text-align: center;
+		}
+
+		.game-tag {
+			margin-top: 6px;
+			font-size: 0.7rem;
+			color: var(--muted);
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+		}
+
+		.empty-state {
+			grid-column: 1 / -1;
+			text-align: center;
+			color: var(--muted);
+			padding: 40px 0;
+		}
+
+		#zoneViewer {
+			position: fixed;
+			inset: 0;
+			background: var(--bg);
+			z-index: 1000;
+			display: none;
+			flex-direction: column;
+		}
+
+		.zone-header {
+			background: var(--surface);
+			border-bottom: 1px solid var(--border);
+			padding: 10px 18px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+		}
+
+		#zoneName {
+			margin: 0;
+			font-size: 1.1rem;
+			font-weight: 700;
+		}
+
+		.zone-controls {
+			display: flex;
+			gap: 8px;
+		}
+
+		.zone-controls button {
+			background: var(--surface-hover);
+			border: 1px solid var(--border);
+			color: var(--text);
+			padding: 8px 12px;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 0.85rem;
+		}
+
+		.zone-controls button:hover {
+			border-color: var(--accent);
+		}
+
+		#zoneFrame {
+			flex-grow: 1;
+			border: none;
+			width: 100%;
+			height: 100%;
+		}
+
+		#zoneLoading {
+			position: absolute;
+			inset: 0;
+			top: 57px;
+			background: var(--bg);
+			color: var(--muted);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			font-family: inherit;
+			z-index: 1;
+		}
+
+		footer {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			text-align: center;
+			padding: 10px;
+			font-size: 0.8rem;
+			color: var(--muted);
+			background: rgba(0, 0, 0, 0.3);
+		}
+
+		.footer-link-btn {
+			background: none;
+			border: none;
+			color: var(--accent);
+			cursor: pointer;
+			font-size: 0.8rem;
+			text-decoration: underline;
+			padding: 0;
+		}
+	</style>
 </head>
+
 <body>
 
-<header>
-  <h1 id="siteTitle">Phaaze Games <span id="splashText"></span></h1>
-  <p id="siteTagline">play something during a free period</p>
-</header>
+	<header>
+		<h1 id="siteTitle">Phaaze Games <span id="splashText"></span></h1>
+		<p id="siteTagline">play something during a free period</p>
+	</header>
 
-<div class="category-bar" id="categoryBar"></div>
+	<div class="category-bar" id="categoryBar"></div>
 
-<div class="controls">
-  <input type="text" id="searchInput" placeholder="Search games" />
+	<div class="controls">
+		<input type="text" id="searchInput" placeholder="Search games" />
 </div>
 
-<div id="gamesContainer">Loading…</div>
+		<div id="gamesContainer">Loading…</div>
 
-<div id="zoneViewer">
-  <div class="zone-header">
-    <h2 id="zoneName">Game</h2>
-    <div class="zone-controls">
-      <button onclick="fullscreenZone()">Fullscreen</button>
-      <button onclick="newTabZone()">Open in new tab</button>
-      <button onclick="closeZone()">Close</button>
-    </div>
-  </div>
-  <div id="zoneLoading">Loading…</div>
-  <iframe id="zoneFrame" allow="fullscreen"></iframe>
-</div>
+		<div id="zoneViewer">
+			<div class="zone-header">
+				<h2 id="zoneName">Game</h2>
+				<div class="zone-controls">
+					<button onclick="fullscreenZone()">Fullscreen</button>
+					<button onclick="newTabZone()">Open in new tab</button>
+					<button onclick="downloadGame()">Download</button>
+					<button onclick="closeZone()">Close</button>
+				</div>
+			</div>
+			<div id="zoneLoading">Loading…</div>
+			<iframe id="zoneFrame" allow="fullscreen"></iframe>
+		</div>
 
-<footer>
-  <span id="footerSiteName">Phaaze Games</span>
-  &nbsp;·&nbsp;
-  <button class="footer-link-btn" onclick="downloadSite()">Download this site</button>
-  &nbsp;·&nbsp;
-  <a class="footer-link-btn" href="https://discord.gg/gnndNWXZtC" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;">Discord</a>
-</footer>
+		<footer>
+			<span id="footerSiteName">Phaaze Games</span>
+			&nbsp;·&nbsp;
+			<button class="footer-link-btn" onclick="downloadSite()">Download this site</button>
+			&nbsp;·&nbsp;
+			<a class="footer-link-btn" href="https://discord.gg/gnndNWXZtC" target="_blank" rel="noopener noreferrer"
+				style="text-decoration:underline;">Discord</a>
+		</footer>
 
-<script>
-// ============================================================
+		<script>
+			// ============================================================
 // SITE THEME
 // ============================================================
 const SITE_NAME = "Phaaze Games";
@@ -287,9 +374,6 @@ function applyTheme() {
 
 // ============================================================
 // GITHUB REPO SETTINGS
-// GitHub Pages serves .html as text/html (unlike jsDelivr which
-// sometimes serves text/plain), so games render instead of
-// showing as code. Also fixes Klonoa's black screen via CORS.
 // ============================================================
 const GITHUB_USER = "interloper-mym";
 const GITHUB_REPO = "PhaazeUnblockedGames";
@@ -430,10 +514,6 @@ function render() {
 
 // ============================================================
 // Game viewer
-// The iframe uses direct src (so Klonoa's emulator runs on
-// GitHub Pages' origin and its ROM fetch is CORS-clean).
-// We ALSO fetch the HTML in the background so the "Open in new
-// tab" button can write it into an about:blank window.
 // ============================================================
 function openZone(item) {
   if (item.category === "link" || /^https?:\/\//i.test(item.path)) {
@@ -491,6 +571,20 @@ function newTabZone() {
   }
 }
 
+// ============================================================
+// Download — always downloads the game's HTML file.
+// For emulator games, that HTML is the EmulatorJS embed,
+// which loads its ROM from a CDN at runtime.
+// ============================================================
+function downloadGame() {
+  if (!lastGameHtml || !lastGameName) {
+    alert("Still loading — try again in a second.");
+    return;
+  }
+  const safeName = lastGameName.replace(/[^a-z0-9\-_ ]/gi, "_");
+  triggerDownload(lastGameHtml, safeName + ".html", "text/html;charset=utf-8");
+}
+
 async function downloadSite() {
   try {
     const res = await fetch(location.href.split("?")[0] + "?t=" + Date.now(), { cache: "no-store" });
@@ -527,6 +621,7 @@ searchInput.addEventListener("input", e => {
 applyTheme();
 showSplashText();
 loadGamesList();
-</script>
+		</script>
 </body>
+
 </html>
