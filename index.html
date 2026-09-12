@@ -5,6 +5,7 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Phaaze Games</title>
+	<link id="faviconLink" rel="icon" href="" />
 	<style>
 		:root {
 			--bg: #0f1019;
@@ -35,6 +36,7 @@
 		header {
 			padding: 28px 16px 12px;
 			text-align: center;
+			position: relative;
 		}
 
 		header h1 {
@@ -49,6 +51,33 @@
 		header p {
 			margin: 0;
 			color: var(--muted);
+		}
+
+		#settingsBtn {
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			background: var(--surface);
+			border: 1px solid var(--border);
+			color: var(--text);
+			width: 42px;
+			height: 42px;
+			padding: 0;
+			border-radius: 10px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: 0.15s;
+		}
+
+		#settingsBtn:hover {
+			border-color: var(--accent);
+			transform: rotate(30deg);
+		}
+
+		#settingsBtn svg {
+			display: block;
 		}
 
 		#splashText {
@@ -271,6 +300,205 @@
 			z-index: 1;
 		}
 
+		#settingsOverlay,
+		#creditsOverlay {
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.65);
+			backdrop-filter: blur(6px);
+			z-index: 2000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			padding: 16px;
+		}
+
+		#settingsOverlay.open,
+		#creditsOverlay.open {
+			display: flex;
+		}
+
+		.modal {
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			width: 100%;
+			max-width: 500px;
+			max-height: 80vh;
+			overflow-y: auto;
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+			animation: popIn 0.2s ease;
+		}
+
+		@keyframes popIn {
+			from {
+				transform: scale(0.95);
+				opacity: 0;
+			}
+
+			to {
+				transform: scale(1);
+				opacity: 1;
+			}
+		}
+
+		.modal-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 16px 20px;
+			border-bottom: 1px solid var(--border);
+		}
+
+		.modal-header h2 {
+			margin: 0;
+			font-size: 1.15rem;
+		}
+
+		.modal-close {
+			background: none;
+			border: none;
+			color: var(--muted);
+			cursor: pointer;
+			padding: 4px;
+			line-height: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 6px;
+			transition: 0.15s;
+		}
+
+		.modal-close:hover {
+			color: var(--text);
+			background: var(--surface-hover);
+		}
+
+		.modal-close svg {
+			display: block;
+		}
+
+		.modal-body {
+			padding: 18px 20px 24px;
+		}
+
+		.settings-section {
+			margin-bottom: 22px;
+		}
+
+		.settings-section:last-child {
+			margin-bottom: 0;
+		}
+
+		.settings-section h3 {
+			margin: 0 0 10px;
+			font-size: 0.78rem;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			font-weight: 700;
+		}
+
+		.cloak-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 8px;
+		}
+
+		.cloak-option {
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			padding: 12px 10px;
+			cursor: pointer;
+			color: var(--text);
+			font-size: 0.85rem;
+			text-align: center;
+			transition: 0.15s;
+		}
+
+		.cloak-option:hover {
+			border-color: var(--accent);
+		}
+
+		.cloak-option.active {
+			background: var(--accent);
+			border-color: var(--accent);
+			color: white;
+		}
+
+		.settings-note {
+			font-size: 0.72rem;
+			color: var(--muted);
+			line-height: 1.5;
+			margin-top: 10px;
+		}
+
+		.credits-section {
+			margin-bottom: 26px;
+		}
+
+		.credits-section:last-child {
+			margin-bottom: 0;
+		}
+
+		.credits-section h3 {
+			margin: 0 0 12px;
+			font-size: 0.95rem;
+			color: var(--accent);
+			letter-spacing: 0.02em;
+			text-transform: uppercase;
+			font-weight: 800;
+		}
+
+		.credits-intro {
+			font-size: 0.82rem;
+			color: var(--muted);
+			line-height: 1.5;
+			margin: 0 0 12px;
+		}
+
+		.credits-section ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.credits-section li {
+			padding: 8px 12px;
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			margin-bottom: 6px;
+			font-size: 0.85rem;
+			color: var(--text);
+		}
+
+		.credits-section li:last-child {
+			margin-bottom: 0;
+		}
+
+		.credits-section .role {
+			color: var(--muted);
+			font-size: 0.75rem;
+			display: block;
+			margin-top: 2px;
+		}
+
+		.credits-section.roast-section h3 {
+			color: #ff5c5c;
+		}
+
+		.credits-section.roast-section .shame-list li {
+			border-color: #5c2c2c;
+			background: linear-gradient(180deg, #1a0f0f 0%, var(--bg) 100%);
+		}
+
+		.credits-section.roast-section .shame-list li::before {
+			content: "💀 ";
+			margin-right: 4px;
+		}
+
 		footer {
 			position: fixed;
 			bottom: 0;
@@ -298,6 +526,12 @@
 <body>
 
 	<header>
+		<button id="settingsBtn" title="Settings" onclick="openSettings()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
 		<h1 id="siteTitle">Phaaze Games <span id="splashText"></span></h1>
 		<p id="siteTagline">play something during a free period</p>
 	</header>
@@ -324,8 +558,140 @@
 			<iframe id="zoneFrame" allow="fullscreen"></iframe>
 		</div>
 
+		<div id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+			<div class="modal">
+				<div class="modal-header">
+					<h2>Settings</h2>
+					<button class="modal-close" onclick="closeSettings()" title="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+				</div>
+				<div class="modal-body">
+					<div class="settings-section">
+						<h3>Tab Cloak</h3>
+						<div class="cloak-grid" id="cloakGrid"></div>
+						<p class="settings-note">
+							Changes the tab title and icon. Doesn't hide the page content itself.
+						</p>
+					</div>
+					<div class="settings-section">
+						<h3>Panic Key</h3>
+						<p class="settings-note" style="margin-top:0;">
+							Press <strong>\</strong> anytime to jump straight to Schoology.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="creditsOverlay" onclick="if(event.target===this)closeCredits()">
+			<div class="modal">
+				<div class="modal-header">
+					<h2>Credits</h2>
+					<button class="modal-close" onclick="closeCredits()" title="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+				</div>
+				<div class="modal-body">
+
+					<div class="credits-section">
+						<h3>MAIN CREDITS (PAINED SOLS)</h3>
+						<ul>
+							<li>
+								<strong>mym</strong> (interloper-mym)
+								<span class="role">He made the website.</span>
+							</li>
+							<li>
+								<strong>enderstorm</strong>
+								<span class="role">Helped get files into the OSD district.</span>
+							</li>
+							<li>
+								<strong>cash</strong>
+								<span class="role">Also made the website. Thank him.</span>
+							</li>
+						</ul>
+					</div>
+
+					<div class="credits-section">
+						<h3>OG (GOOGLE SITE) WEBSITE HOSTERS HALL OF SHAME</h3>
+						<p class="credits-intro">
+							The legends who hosted the site back in the Google Sites days.
+						</p>
+						<ul>
+							<li>
+								<strong>Gunner</strong>
+								<span class="role">Hosted Ω (killyourself branch)</span>
+							</li>
+							<li>
+								<strong>Francis</strong>
+								<span class="role">Hosted Ω (original)</span>
+							</li>
+							<li>
+								<strong>Orion</strong>
+								<span class="role">Hosted Ω (ilovepuro branch)</span>
+							</li>
+							<li>
+								<strong>Silly</strong>
+								<span class="role">SWS tester</span>
+							</li>
+							<li>
+								<strong>Flimp</strong>
+								<span class="role">Hosted S.W.S (jiequan branch)</span>
+							</li>
+							<li>
+								<strong>Justin</strong>
+								<span class="role">Hosted Ω (i'm ji9sol's branch)</span>
+							</li>
+						</ul>
+					</div>
+
+					<div class="credits-section roast-section">
+						<h3>SCHOOL &amp; BLOCKERS HALL OF SHAME</h3>
+						<p class="credits-intro">
+							These are the people who tried to stop us. They failed. Publicly.
+						</p>
+						<ul class="shame-list">
+							<li>
+								<strong>Securly</strong>
+								<span class="role">You literally cannot see an about:blank page. Your entire product is "we can't screenshot this one." And yet districts keep paying. Your a furry kisser you like kissing furrys dont you wuw.</span>
+							</li>
+							<li>
+								<strong>GoGuardian</strong>
+								<span class="role">Manifest V3 gutted your extension, schools kept the contract, and you're still out here acting like you're watching. We see you seeing nothing. The dashboard is a screensaver with a subscription fee.</span>
+							</li>
+							<li>
+								<strong>The OSD District IT Department</strong>
+								<span class="role">BITE ME! THIS IS FOR SWIZZY GAMES 1! You block one proxy, we add four. You block four, we add twelve. You're not IT, you're a whack-a-mole machine with a helpdesk ticket queue. Have fun explaining to the board why you need overtime to keep losing.</span>
+							</li>
+							<li>
+								<strong>Whoever Keeps Adding "games" but not yiff to the Blocklist</strong>
+								<span class="role">uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh ok???????? Your blocklist has more entries than the school library and somehow every single one is wrong. You have one job. It is not going well.</span>
+							</li>
+							<li>
+								<strong>ChromeOS Updates</strong>
+								<span class="role">why? Nobody asked. Every version ships a new "security fix" that breaks my extensions, my keyboard shortcuts, and my will to live. You patched Dextensify, LTMEAT, and three other things I haven't even named yet — and I found the next one before the update finished installing. Stop.</span>
+							</li>
+							<li>
+								<strong>THE SHITHEAD THAT MADE DIBS</strong>
+								<span class="role"></span>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
 		<footer>
 			<span id="footerSiteName">Phaaze Games</span>
+			&nbsp;·&nbsp;
+			<button class="footer-link-btn" onclick="openCredits()">Credits</button>
 			&nbsp;·&nbsp;
 			<button class="footer-link-btn" onclick="downloadSite()">Download this site</button>
 			&nbsp;·&nbsp;
@@ -334,10 +700,7 @@
 		</footer>
 
 		<script>
-			// ============================================================
-// SITE THEME
-// ============================================================
-const SITE_NAME = "Phaaze Games";
+			const SITE_NAME = "Phaaze Games";
 const SITE_TAGLINE = "play something during a free period";
 const THEME = {
   bg: "#0f1019",
@@ -351,6 +714,70 @@ const THEME = {
   splashColor: "#ffff00"
 };
 
+const CLOAK_FLAVORS = {
+  none: {
+    label: "Off",
+    title: SITE_NAME,
+    favicon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237c5cff'/><text x='50' y='68' font-size='60' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>P</text></svg>"
+  },
+  docs: {
+    label: "Google Docs",
+    title: "Untitled document - Google Docs",
+    favicon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%234285f4'/><rect x='25' y='20' width='50' height='60' rx='4' fill='white'/><line x1='32' y1='35' x2='68' y2='35' stroke='%23dadce0' stroke-width='3'/><line x1='32' y1='45' x2='68' y2='45' stroke='%23dadce0' stroke-width='3'/><line x1='32' y1='55' x2='55' y2='55' stroke='%23dadce0' stroke-width='3'/></svg>"
+  },
+  schoology: {
+    label: "Schoology",
+    title: "Home | Schoology",
+    favicon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23009bda'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>S</text></svg>"
+  },
+  pizza: {
+    label: "Pizza.com",
+    title: "Pizza.com - Order Pizza Online",
+    favicon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,10 90,85 10,85' fill='%23f4b400'/><circle cx='40' cy='55' r='5' fill='%23d32f2f'/><circle cx='60' cy='65' r='5' fill='%23d32f2f'/><circle cx='50' cy='40' r='4' fill='%23d32f2f'/></svg>"
+  }
+};
+
+let currentCloak = "none";
+const faviconLink = document.getElementById("faviconLink");
+const settingsOverlay = document.getElementById("settingsOverlay");
+const creditsOverlay = document.getElementById("creditsOverlay");
+const cloakGrid = document.getElementById("cloakGrid");
+
+function applyCloak(name) {
+  const flavor = CLOAK_FLAVORS[name];
+  if (!flavor) return;
+  currentCloak = name;
+  document.title = flavor.title;
+  faviconLink.href = flavor.favicon;
+  document.querySelectorAll(".cloak-option").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.cloak === name);
+  });
+}
+
+function buildCloakGrid() {
+  cloakGrid.innerHTML = "";
+  Object.entries(CLOAK_FLAVORS).forEach(([key, flavor]) => {
+    const btn = document.createElement("button");
+    btn.className = "cloak-option" + (key === currentCloak ? " active" : "");
+    btn.dataset.cloak = key;
+    btn.textContent = flavor.label;
+    btn.onclick = () => applyCloak(key);
+    cloakGrid.appendChild(btn);
+  });
+}
+
+function openSettings() { settingsOverlay.classList.add("open"); }
+function closeSettings() { settingsOverlay.classList.remove("open"); }
+function openCredits() { creditsOverlay.classList.add("open"); }
+function closeCredits() { creditsOverlay.classList.remove("open"); }
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    closeSettings();
+    closeCredits();
+  }
+});
+
 function applyTheme() {
   const root = document.documentElement.style;
   root.setProperty("--bg", THEME.bg);
@@ -363,7 +790,6 @@ function applyTheme() {
   root.setProperty("--accent-hover", THEME.accentHover);
   document.documentElement.style.setProperty("--splash-color", THEME.splashColor);
 
-  document.title = SITE_NAME;
   const titleEl = document.getElementById("siteTitle");
   const taglineEl = document.getElementById("siteTagline");
   if (titleEl) titleEl.firstChild.textContent = SITE_NAME + " ";
@@ -372,16 +798,10 @@ function applyTheme() {
   if (footerNameEl) footerNameEl.textContent = SITE_NAME;
 }
 
-// ============================================================
-// GITHUB REPO SETTINGS
-// ============================================================
 const GITHUB_USER = "interloper-mym";
 const GITHUB_REPO = "PhaazeUnblockedGames";
 const CDN_BASE = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/`;
 
-// ============================================================
-// SPLASH TEXT
-// ============================================================
 const splashes = [
   "Off to go hang myself!",
   "hamburger",
@@ -393,9 +813,6 @@ const splashes = [
   "Color purple, Go play with your FRIENDS!"
 ];
 
-// ============================================================
-// State
-// ============================================================
 let items = [];
 let currentCategory = "all";
 let currentSearch = "";
@@ -421,9 +838,6 @@ function showSplashText() {
   if (el) el.textContent = splashes[Math.floor(Math.random() * splashes.length)];
 }
 
-// ============================================================
-// Load games.json
-// ============================================================
 async function loadGamesList() {
   container.innerHTML = "Loading games…";
   try {
@@ -441,9 +855,6 @@ async function loadGamesList() {
   render();
 }
 
-// ============================================================
-// Category bar + search + cards
-// ============================================================
 function buildCategoryBar() {
   const cats = ["all", ...new Set(items.map(i => i.category))];
   categoryBar.innerHTML = "";
@@ -512,9 +923,6 @@ function render() {
   });
 }
 
-// ============================================================
-// Game viewer
-// ============================================================
 function openZone(item) {
   if (item.category === "link" || /^https?:\/\//i.test(item.path)) {
     window.open(resolveUrl(item.path), "_blank");
@@ -571,11 +979,6 @@ function newTabZone() {
   }
 }
 
-// ============================================================
-// Download — always downloads the game's HTML file.
-// For emulator games, that HTML is the EmulatorJS embed,
-// which loads its ROM from a CDN at runtime.
-// ============================================================
 function downloadGame() {
   if (!lastGameHtml || !lastGameName) {
     alert("Still loading — try again in a second.");
@@ -610,15 +1013,20 @@ function triggerDownload(content, filename, mime) {
   URL.revokeObjectURL(url);
 }
 
-// ============================================================
-// Wire up + start
-// ============================================================
 searchInput.addEventListener("input", e => {
   currentSearch = e.target.value;
   render();
 });
 
+document.addEventListener("keydown", e => {
+  if (e.key === "\\" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    if (document.activeElement === searchInput) return;
+    window.location.href = "https://olympia.schoology.com/home";
+  }
+});
+
 applyTheme();
+buildCloakGrid();
 showSplashText();
 loadGamesList();
 		</script>
