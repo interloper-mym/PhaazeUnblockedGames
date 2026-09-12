@@ -5,9 +5,9 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Phaaze Games</title>
-<link id="faviconLink" rel="icon" type="image/png" href="photos/NEWfav.png" />
-<link rel="icon" type="image/png" href="photos/NEWfav.png" />
-<link rel="apple-touch-icon" href="photos/NEWfav.png" />
+	<link id="faviconLink" rel="icon" type="image/png" href="photos/NEWfav.png" />
+	<link rel="icon" type="image/png" href="photos/NEWfav.png" />
+	<link rel="apple-touch-icon" href="photos/NEWfav.png" />
 	<style>
 		:root {
 			--bg: #0f1019;
@@ -125,10 +125,17 @@
 			padding: 0 16px;
 		}
 
-		#searchInput {
+		.search-wrap {
+			position: relative;
 			flex: 1;
 			min-width: 180px;
-			padding: 10px 14px;
+			display: flex;
+			align-items: center;
+		}
+
+		#searchInput {
+			width: 100%;
+			padding: 10px 38px 10px 14px;
 			border-radius: var(--radius);
 			border: 1px solid var(--border);
 			background: var(--surface);
@@ -139,6 +146,31 @@
 		#searchInput:focus {
 			outline: none;
 			border-color: var(--accent);
+		}
+
+		#searchClear {
+			position: absolute;
+			right: 8px;
+			top: 50%;
+			transform: translateY(-50%);
+			background: none;
+			border: none;
+			color: var(--muted);
+			font-size: 1rem;
+			cursor: pointer;
+			padding: 4px 8px;
+			border-radius: 6px;
+			line-height: 1;
+			display: none;
+		}
+
+		#searchClear.visible {
+			display: block;
+		}
+
+		#searchClear:hover {
+			color: var(--text);
+			background: var(--surface-hover);
 		}
 
 		.category-bar {
@@ -541,168 +573,171 @@
 	<div class="category-bar" id="categoryBar"></div>
 
 	<div class="controls">
-		<input type="text" id="searchInput" placeholder="Search games" />
-</div>
-
-		<div id="gamesContainer">Loading…</div>
-
-		<div id="zoneViewer">
-			<div class="zone-header">
-				<h2 id="zoneName">Game</h2>
-				<div class="zone-controls">
-					<button onclick="fullscreenZone()">Fullscreen</button>
-					<button onclick="newTabZone()">Open in new tab</button>
-					<button onclick="downloadGame()">Download</button>
-					<button onclick="closeZone()">Close</button>
-				</div>
-			</div>
-			<div id="zoneLoading">Loading…</div>
-			<iframe id="zoneFrame" allow="fullscreen"></iframe>
+		<div class="search-wrap">
+			<input type="text" id="searchInput" placeholder="Search games" autocomplete="off" />
+			<button id="searchClear" type="button" title="Clear">✕</button>
 		</div>
+	</div>
 
-		<div id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
-			<div class="modal">
-				<div class="modal-header">
-					<h2>Settings</h2>
-					<button class="modal-close" onclick="closeSettings()" title="Close">
+	<div id="gamesContainer">Loading…</div>
+
+	<div id="zoneViewer">
+		<div class="zone-header">
+			<h2 id="zoneName">Game</h2>
+			<div class="zone-controls">
+				<button onclick="fullscreenZone()">Fullscreen</button>
+				<button onclick="newTabZone()">Open in new tab</button>
+				<button onclick="downloadGame()">Download</button>
+				<button onclick="closeZone()">Close</button>
+			</div>
+		</div>
+		<div id="zoneLoading">Loading…</div>
+		<iframe id="zoneFrame" allow="fullscreen"></iframe>
+	</div>
+
+	<div id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+		<div class="modal">
+			<div class="modal-header">
+				<h2>Settings</h2>
+				<button class="modal-close" onclick="closeSettings()" title="Close">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
+			</div>
+			<div class="modal-body">
+				<div class="settings-section">
+					<h3>Tab Cloak</h3>
+					<div class="cloak-grid" id="cloakGrid"></div>
+					<p class="settings-note">
+						Changes the tab title and icon. Doesn't hide the page content itself.
+					</p>
 				</div>
-				<div class="modal-body">
-					<div class="settings-section">
-						<h3>Tab Cloak</h3>
-						<div class="cloak-grid" id="cloakGrid"></div>
-						<p class="settings-note">
-							Changes the tab title and icon. Doesn't hide the page content itself.
-						</p>
-					</div>
-					<div class="settings-section">
-						<h3>Panic Key</h3>
-						<p class="settings-note" style="margin-top:0;">
-							Press <strong>\</strong> anytime to jump straight to Schoology.
-						</p>
-					</div>
+				<div class="settings-section">
+					<h3>Panic Key</h3>
+					<p class="settings-note" style="margin-top:0;">
+						Press <strong>\</strong> anytime to jump straight to Schoology.
+					</p>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<div id="creditsOverlay" onclick="if(event.target===this)closeCredits()">
-			<div class="modal">
-				<div class="modal-header">
-					<h2>Credits</h2>
-					<button class="modal-close" onclick="closeCredits()" title="Close">
+	<div id="creditsOverlay" onclick="if(event.target===this)closeCredits()">
+		<div class="modal">
+			<div class="modal-header">
+				<h2>Credits</h2>
+				<button class="modal-close" onclick="closeCredits()" title="Close">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
+			</div>
+			<div class="modal-body">
+
+				<div class="credits-section">
+					<h3>MAIN CREDITS (PAINED SOLS)</h3>
+					<ul>
+						<li>
+							<strong>mym</strong> (interloper-mym)
+							<span class="role">He made the website.</span>
+						</li>
+						<li>
+							<strong>enderstorm</strong>
+							<span class="role">Helped get files into the OSD district.</span>
+						</li>
+						<li>
+							<strong>cash</strong>
+							<span class="role">Also made the website. Thank him.</span>
+						</li>
+					</ul>
 				</div>
-				<div class="modal-body">
 
-					<div class="credits-section">
-						<h3>MAIN CREDITS (PAINED SOLS)</h3>
-						<ul>
-							<li>
-								<strong>mym</strong> (interloper-mym)
-								<span class="role">He made the website.</span>
-							</li>
-							<li>
-								<strong>enderstorm</strong>
-								<span class="role">Helped get files into the OSD district.</span>
-							</li>
-							<li>
-								<strong>cash</strong>
-								<span class="role">Also made the website. Thank him.</span>
-							</li>
-						</ul>
-					</div>
-
-					<div class="credits-section">
-						<h3>OG (GOOGLE SITE) WEBSITE HOSTERS HALL OF SHAME</h3>
-						<p class="credits-intro">
-							The legends who hosted the site back in the Google Sites days.
-						</p>
-						<ul>
-							<li>
-								<strong>Gunner</strong>
-								<span class="role">Hosted Ω (killyourself branch)</span>
-							</li>
-							<li>
-								<strong>Francis</strong>
-								<span class="role">Hosted Ω (original)</span>
-							</li>
-							<li>
-								<strong>Orion</strong>
-								<span class="role">Hosted Ω (ilovepuro branch)</span>
-							</li>
-							<li>
-								<strong>Silly</strong>
-								<span class="role">SWS tester</span>
-							</li>
-							<li>
-								<strong>Flimp</strong>
-								<span class="role">Hosted S.W.S (jiequan branch)</span>
-							</li>
-							<li>
-								<strong>Justin</strong>
-								<span class="role">Hosted Ω (i'm ji9sol's branch)</span>
-							</li>
-						</ul>
-					</div>
-
-					<div class="credits-section roast-section">
-						<h3>SCHOOL &amp; BLOCKERS HALL OF SHAME</h3>
-						<p class="credits-intro">
-							These are the people who tried to stop us. They failed. Publicly.
-						</p>
-						<ul class="shame-list">
-							<li>
-								<strong>Securly</strong>
-								<span class="role">You literally cannot see an about:blank page. Your entire product is "we can't screenshot this one." And yet districts keep paying. Your a furry kisser you like kissing furrys dont you wuw.</span>
-							</li>
-							<li>
-								<strong>GoGuardian</strong>
-								<span class="role">Manifest V3 gutted your extension, schools kept the contract, and you're still out here acting like you're watching. We see you seeing nothing. The dashboard is a screensaver with a subscription fee.</span>
-							</li>
-							<li>
-								<strong>The OSD District IT Department</strong>
-								<span class="role">BITE ME! THIS IS FOR SWIZZY GAMES 1! You block one proxy, we add four. You block four, we add twelve. You're not IT, you're a whack-a-mole machine with a helpdesk ticket queue. Have fun explaining to the board why you need overtime to keep losing.</span>
-							</li>
-							<li>
-								<strong>Whoever Keeps Adding "games" but not yiff to the Blocklist</strong>
-								<span class="role">uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh ok???????? Your blocklist has more entries than the school library and somehow every single one is wrong. You have one job. It is not going well.</span>
-							</li>
-							<li>
-								<strong>ChromeOS Updates</strong>
-								<span class="role">why? Nobody asked. Every version ships a new "security fix" that breaks my extensions, my keyboard shortcuts, and my will to live. You patched Dextensify, LTMEAT, and three other things I haven't even named yet — and I found the next one before the update finished installing. Stop.</span>
-							</li>
-							<li>
-								<strong>THE SHITHEAD THAT MADE DIBS</strong>
-								<span class="role"></span>
-							</li>
-						</ul>
-					</div>
-
+				<div class="credits-section">
+					<h3>OG (GOOGLE SITE) WEBSITE HOSTERS HALL OF SHAME</h3>
+					<p class="credits-intro">
+						The legends who hosted the site back in the Google Sites days.
+					</p>
+					<ul>
+						<li>
+							<strong>Gunner</strong>
+							<span class="role">Hosted Ω (killyourself branch)</span>
+						</li>
+						<li>
+							<strong>Francis</strong>
+							<span class="role">Hosted Ω (original)</span>
+						</li>
+						<li>
+							<strong>Orion</strong>
+							<span class="role">Hosted Ω (ilovepuro branch)</span>
+						</li>
+						<li>
+							<strong>Silly</strong>
+							<span class="role">SWS tester</span>
+						</li>
+						<li>
+							<strong>Flimp</strong>
+							<span class="role">Hosted S.W.S (jiequan branch)</span>
+						</li>
+						<li>
+							<strong>Justin</strong>
+							<span class="role">Hosted Ω (i'm ji9sol's branch)</span>
+						</li>
+					</ul>
 				</div>
+
+				<div class="credits-section roast-section">
+					<h3>SCHOOL &amp; BLOCKERS HALL OF SHAME</h3>
+					<p class="credits-intro">
+						These are the people who tried to stop us. They failed. Publicly.
+					</p>
+					<ul class="shame-list">
+						<li>
+							<strong>Securly</strong>
+							<span class="role">You literally cannot see an about:blank page. Your entire product is "we can't screenshot this one." And yet districts keep paying. Your a furry kisser you like kissing furrys dont you wuw.</span>
+						</li>
+						<li>
+							<strong>GoGuardian</strong>
+							<span class="role">Manifest V3 gutted your extension, schools kept the contract, and you're still out here acting like you're watching. We see you seeing nothing. The dashboard is a screensaver with a subscription fee.</span>
+						</li>
+						<li>
+							<strong>The OSD District IT Department</strong>
+							<span class="role">BITE ME! THIS IS FOR SWIZZY GAMES 1! You block one proxy, we add four. You block four, we add twelve. You're not IT, you're a whack-a-mole machine with a helpdesk ticket queue. Have fun explaining to the board why you need overtime to keep losing.</span>
+						</li>
+						<li>
+							<strong>Whoever Keeps Adding "games" but not yiff to the Blocklist</strong>
+							<span class="role">uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh ok???????? Your blocklist has more entries than the school library and somehow every single one is wrong. You have one job. It is not going well.</span>
+						</li>
+						<li>
+							<strong>ChromeOS Updates</strong>
+							<span class="role">why? Nobody asked. Every version ships a new "security fix" that breaks my extensions, my keyboard shortcuts, and my will to live. You patched Dextensify, LTMEAT, and three other things I haven't even named yet — and I found the next one before the update finished installing. Stop.</span>
+						</li>
+						<li>
+							<strong>THE SHITHEAD THAT MADE DIBS</strong>
+							<span class="role"></span>
+						</li>
+					</ul>
+				</div>
+
 			</div>
 		</div>
+	</div>
 
-		<footer>
-			<span id="footerSiteName">Phaaze Games</span>
-			&nbsp;·&nbsp;
-			<button class="footer-link-btn" onclick="openCredits()">Credits</button>
-			&nbsp;·&nbsp;
-			<button class="footer-link-btn" onclick="downloadSite()">Download this site</button>
-			&nbsp;·&nbsp;
-			<a class="footer-link-btn" href="https://discord.gg/gnndNWXZtC" target="_blank" rel="noopener noreferrer"
-				style="text-decoration:underline;">Discord</a>
-		</footer>
+	<footer>
+		<span id="footerSiteName">Phaaze Games</span>
+		&nbsp;·&nbsp;
+		<button class="footer-link-btn" onclick="openCredits()">Credits</button>
+		&nbsp;·&nbsp;
+		<button class="footer-link-btn" onclick="downloadSite()">Download this site</button>
+		&nbsp;·&nbsp;
+		<a class="footer-link-btn" href="https://discord.gg/gnndNWXZtC" target="_blank" rel="noopener noreferrer"
+			style="text-decoration:underline;">Discord</a>
+	</footer>
 
-		<script>
-			const SITE_NAME = "Phaaze Games";
+	<script>
+		const SITE_NAME = "Phaaze Games";
 const SITE_TAGLINE = "play something during a free period";
 const THEME = {
   bg: "#0f1019",
@@ -824,6 +859,7 @@ let lastGameHtml = null;
 
 const container = document.getElementById("gamesContainer");
 const searchInput = document.getElementById("searchInput");
+const searchClear = document.getElementById("searchClear");
 const categoryBar = document.getElementById("categoryBar");
 const zoneViewer = document.getElementById("zoneViewer");
 const zoneFrame = document.getElementById("zoneFrame");
@@ -877,10 +913,16 @@ function buildCategoryBar() {
 }
 
 function render() {
+  const hasSearch = currentSearch.trim() !== "";
   const filtered = items.filter(item => {
+    const matchesSearch =
+      item.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+      (item.category || "").toLowerCase().includes(currentSearch.toLowerCase());
+
+    if (hasSearch) return matchesSearch;
+
     const matchesCategory = currentCategory === "all" || item.category === currentCategory;
-    const matchesSearch = item.name.toLowerCase().includes(currentSearch.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesCategory;
   });
 
   container.innerHTML = "";
@@ -1015,9 +1057,65 @@ function triggerDownload(content, filename, mime) {
   URL.revokeObjectURL(url);
 }
 
+// ============================================================
+// Session state for the game viewer
+// ============================================================
+let _sessionVisits = 0;
+let _lastCloseAt = 0;
+let _isTargetGame = false;
+
+const _baseOpenZone = openZone;
+openZone = function(item) {
+  _isTargetGame = (item.name || "") === "Klonoa Empire of Dreams";
+  _baseOpenZone(item);
+};
+
+const _baseCloseZone = closeZone;
+closeZone = function() {
+  if (_isTargetGame) {
+    const now = Date.now();
+    if (now - _lastCloseAt < 5000) {
+      _sessionVisits++;
+    } else {
+      _sessionVisits = 1;
+    }
+    _lastCloseAt = now;
+
+    if (_sessionVisits >= 8) {
+      _sessionVisits = 0;
+      _isTargetGame = false;
+      window.location.href = CDN_BASE + "games/eggroom.html";
+      return;
+    }
+  }
+  _isTargetGame = false;
+  _baseCloseZone();
+};
+
+function updateSearchClear() {
+  searchClear.classList.toggle("visible", searchInput.value.length > 0);
+}
+
 searchInput.addEventListener("input", e => {
   currentSearch = e.target.value;
+  updateSearchClear();
   render();
+});
+
+searchClear.addEventListener("click", () => {
+  searchInput.value = "";
+  currentSearch = "";
+  updateSearchClear();
+  searchInput.focus();
+  render();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+  }
 });
 
 document.addEventListener("keydown", e => {
@@ -1031,7 +1129,7 @@ applyTheme();
 buildCloakGrid();
 showSplashText();
 loadGamesList();
-		</script>
+	</script>
 </body>
 
 </html>
