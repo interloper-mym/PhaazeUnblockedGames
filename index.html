@@ -40,9 +40,10 @@
 
   #splashText {
     position: absolute;
-    top: -14px;
-    right: -6px;
-    transform: rotate(-20deg) translateX(100%);
+    top: 38px;
+    left: 100%;
+    margin-left: 10px;
+    transform: rotate(-20deg);
     transform-origin: bottom left;
     color: var(--splash-color);
     text-shadow: 1.5px 1.5px 0 rgba(0,0,0,0.6);
@@ -54,8 +55,8 @@
     animation: splash-bounce 0.7s infinite alternate ease-in-out;
   }
   @keyframes splash-bounce {
-    from { transform: rotate(-20deg) translateX(100%) scale(1); }
-    to   { transform: rotate(-20deg) translateX(100%) scale(1.12); }
+    from { transform: rotate(-20deg) scale(1); }
+    to   { transform: rotate(-20deg) scale(1.12); }
   }
   @media (prefers-reduced-motion: reduce) {
     #splashText { animation: none; }
@@ -176,6 +177,18 @@
   }
   .zone-controls button:hover { border-color: var(--accent); }
   #zoneFrame { flex-grow: 1; border: none; width: 100%; }
+  #zoneLoading {
+    position: absolute;
+    inset: 0;
+    top: 57px;
+    background: var(--bg);
+    color: var(--muted);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    z-index: 1;
+  }
 
   footer {
     position: fixed;
@@ -222,13 +235,16 @@
       <button onclick="closeZone()">Close</button>
     </div>
   </div>
-  <iframe id="zoneFrame" allowfullscreen webkitallowfullscreen mozallowfullscreen allow="fullscreen"></iframe>
+  <div id="zoneLoading">Loading…</div>
+  <iframe id="zoneFrame" allow="fullscreen"></iframe>
 </div>
 
 <footer>
   <span id="footerSiteName">Phaaze Games</span>
   &nbsp;·&nbsp;
   <button class="footer-link-btn" onclick="downloadSite()">Download this site</button>
+  &nbsp;·&nbsp;
+  <a class="footer-link-btn" href="https://discord.gg/gnndNWXZtC" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;">Discord</a>
 </footer>
 
 <script>
@@ -288,14 +304,14 @@ const CDN_BASE = `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${GI
 // SPLASH TEXT — random tagline shown next to the title.
 // ============================================================
 const splashes = [
-  "100% PAIN!",
-  "now with extra buttons-o-doom!",
-  "ctr+shift+q+q your self NOW",
-  "securly can suck it",
-  "bitch we got singlefile",
-  "we be using ai",
-  "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-  "furrys are... somthing?"
+  "100% free period approved!",
+  "now with extra pixels!",
+  "also try alt+tab!",
+  "student powered!",
+  "no download required!",
+  "may contain high scores!",
+  "ctrl+w is your friend!",
+  "refresh for a new splash!"
 ];
 
 // ============================================================
@@ -313,6 +329,7 @@ const searchInput = document.getElementById("searchInput");
 const categoryBar = document.getElementById("categoryBar");
 const zoneViewer = document.getElementById("zoneViewer");
 const zoneFrame = document.getElementById("zoneFrame");
+const zoneLoading = document.getElementById("zoneLoading");
 const zoneName = document.getElementById("zoneName");
 
 function resolveUrl(path) {
@@ -433,6 +450,13 @@ function loadingMessage(text) {
     `display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">${text}</body>`;
 }
 
+function writeIntoFrame(html) {
+  const frameDoc = zoneFrame.contentDocument || zoneFrame.contentWindow.document;
+  frameDoc.open();
+  frameDoc.write(html);
+  frameDoc.close();
+}
+
 function openZone(item) {
   if (item.category === "link" || /^https?:\/\//i.test(item.path)) {
     window.open(resolveUrl(item.path), "_blank");
@@ -440,12 +464,24 @@ function openZone(item) {
   }
 
   const resolved = resolveUrl(item.path);
+  const isLocalFile = location.protocol === "file:";
   lastGameUrl = resolved;
   lastGameName = item.name;
   lastGameHtml = null;
-  zoneName.textContent = item.name;
-  zoneFrame.srcdoc = loadingMessage("Loading…");
-  zoneViewer.style.display = "flex";
+
+  // On file:// there's no way to embed a working game inside this page
+  // (browsers block that for security reasons) — so open a real new tab
+  // instead, which works fine everywhere including file://.
+  let newTab = null;
+  if (isLocalFile) {
+    newTab = window.open("", "_blank");
+  } else {
+    zoneName.textContent = item.name;
+    zoneLoading.style.display = "flex";
+    zoneLoading.textContent = "Loading…";
+    writeIntoFrame(loadingMessage("Loading…"));
+    zoneViewer.style.display = "flex";
+  }
 
   fetch(resolved + "?t=" + Date.now())
     .then(res => {
@@ -454,18 +490,37 @@ function openZone(item) {
     })
     .then(html => {
       lastGameHtml = injectBaseTag(html, resolved);
-      zoneFrame.srcdoc = lastGameHtml;
+      if (isLocalFile) {
+        if (newTab) {
+          newTab.document.open();
+          newTab.document.write(lastGameHtml);
+          newTab.document.close();
+        } else {
+          alert("Your browser blocked the popup — allow popups for this page and try again.");
+        }
+      } else {
+        writeIntoFrame(lastGameHtml);
+        zoneLoading.style.display = "none";
+      }
     })
     .catch(err => {
-      zoneFrame.srcdoc = loadingMessage(
-        "Couldn't load this game (" + String(err.message).replace(/</g, "&lt;") + ")"
-      );
+      const msg = "Couldn't load this game (" + String(err.message).replace(/</g, "&lt;") + ")";
+      if (isLocalFile) {
+        if (newTab) {
+          newTab.document.open();
+          newTab.document.write(loadingMessage(msg));
+          newTab.document.close();
+        }
+      } else {
+        writeIntoFrame(loadingMessage(msg));
+        zoneLoading.style.display = "none";
+      }
     });
 }
 
 function closeZone() {
   zoneViewer.style.display = "none";
-  zoneFrame.srcdoc = "";
+  zoneFrame.src = "about:blank";
   lastGameUrl = null;
   lastGameName = null;
   lastGameHtml = null;
