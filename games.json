@@ -4,7 +4,7 @@
     "image": "photos/klona.jpg",
     "path": "games/Klonoa_Empire_of_Dreams.html",
     "new": false,
-    "category": "game"
+    "category": "retro"
   },
   {
     "name": "Unfaredine",
@@ -12,5 +12,19 @@
     "path": "games/NGAHHHsim.html",
     "new": true,
     "category": "game"
+  },
+  {
+    "name": "RUINS",
+    "image": "photos/ruins.jpg",
+    "path": "games/RUINS.html",
+    "new": true,
+    "category": "proxy"
+  },
+  {
+    "name": "Wakfu Mini",
+    "image": "photos/wakfu.jpg",
+    "path": "games/wakfumini.html",
+    "new": true,
+    "category": "proxy"
   }
 ]
