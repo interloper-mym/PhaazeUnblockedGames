@@ -8,6 +8,8 @@
 	<link id="faviconLink" rel="icon" type="image/png" href="photos/NEWfav.png" />
 	<link rel="icon" type="image/png" href="photos/NEWfav.png" />
 	<link rel="apple-touch-icon" href="photos/NEWfav.png" />
+	<link rel="manifest" href="manifest.json" />
+	<meta name="theme-color" content="#0f1019" />
 	<style>
 		:root {
 			--bg: #0f1019;
@@ -484,7 +486,6 @@
 			margin-top: 10px;
 		}
 
-		/* ===== CDN selector ===== */
 		.cdn-row {
 			display: flex;
 			gap: 8px;
@@ -507,7 +508,9 @@
 			border-color: var(--accent);
 		}
 
-		#cdnTestBtn {
+		#cdnTestBtn,
+		#pwaCacheBtn,
+		#pwaStatusBtn {
 			background: var(--surface-hover);
 			border: 1px solid var(--border);
 			color: var(--text);
@@ -519,16 +522,21 @@
 			white-space: nowrap;
 		}
 
-		#cdnTestBtn:hover {
+		#cdnTestBtn:hover,
+		#pwaCacheBtn:hover,
+		#pwaStatusBtn:hover {
 			border-color: var(--accent);
 		}
 
-		#cdnTestBtn:disabled {
+		#cdnTestBtn:disabled,
+		#pwaCacheBtn:disabled,
+		#pwaStatusBtn:disabled {
 			opacity: 0.6;
 			cursor: wait;
 		}
 
-		#cdnStatus {
+		#cdnStatus,
+		#pwaStatus {
 			margin-top: 8px;
 			font-size: 0.75rem;
 			color: var(--muted);
@@ -672,7 +680,7 @@
 			</div>
 		</div>
 		<div id="zoneLoading">Loading…</div>
-		<iframe id="zoneFrame" allow="fullscreen"></iframe>
+		<iframe id="zoneFrame" allow="fullscreen; gamepad; autoplay"></iframe>
 	</div>
 
 	<div id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
@@ -689,15 +697,30 @@
 			<div class="modal-body">
 
 				<div class="settings-section">
-					<h3>Content Source (CDN)</h3>
+					<h3>Offline Cache (PWA)</h3>
+					<div id="pwaStatus" class="settings-note">Checking…</div>
+					<div class="cdn-row" style="margin-top:8px;">
+						<button id="pwaCacheBtn" onclick="cacheEverything()">Cache Everything Now</button>
+						<button id="pwaStatusBtn" onclick="checkPWAStatus()">Refresh Status</button>
+					</div>
+					<p class="settings-note">
+						Saves every game, thumbnail, and config file to your browser's offline cache.
+						After caching once on an unblocked network, the site works from cache
+						everywhere — including on filtered school networks.
+					</p>
+				</div>
+
+				<div class="settings-section">
+					<h3>Site Source (Home Page Only)</h3>
 					<div class="cdn-row">
 						<select id="cdnSelect"></select>
 						<button id="cdnTestBtn" onclick="testCDN()">Test</button>
 					</div>
 					<div id="cdnStatus"></div>
 					<p class="settings-note">
-						Switches where the site loads from. Changing the source reloads the page.
-						Some games pull assets from their own hardcoded URLs and may not fully switch.
+						Only changes where the home page, thumbnails, and games.json load from.
+						Games always launch from GitHub Pages, so they stay reachable even if
+						the CDN gets blocked.
 					</p>
 				</div>
 
@@ -871,11 +894,14 @@ const CLOAK_FLAVORS = {
 };
 
 /* ============================================================
-   CDN CONFIG
+   CDN CONFIG — site assets only
    ============================================================ */
 const GITHUB_USER = "interloper-mym";
 const GITHUB_REPO = "PhaazeUnblockedGames";
 const CDN_BRANCH = "main";
+
+/* Games ALWAYS load from GitHub Pages, regardless of CDN setting. */
+const GAME_BASE = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/`;
 
 const CDN_OPTIONS = {
   github: {
@@ -1077,6 +1103,11 @@ function resolveUrl(path) {
   return CDN_BASE + path;
 }
 
+function resolveGameUrl(path) {
+  if (/^https?:\/\//i.test(path)) return path;
+  return GAME_BASE + path;
+}
+
 function showSplashText() {
   const el = document.getElementById("splashText");
   if (el) el.textContent = splashes[Math.floor(Math.random() * splashes.length)];
@@ -1175,11 +1206,11 @@ function render() {
 
 function openZone(item) {
   if (item.category === "link" || /^https?:\/\//i.test(item.path)) {
-    window.open(resolveUrl(item.path), "_blank");
+    window.open(resolveGameUrl(item.path), "_blank");
     return;
   }
 
-  const resolved = resolveUrl(item.path);
+  const resolved = resolveGameUrl(item.path);
   lastGameUrl = resolved;
   lastGameName = item.name;
   lastGameHtml = null;
@@ -1290,7 +1321,7 @@ closeZone = function() {
     if (_sessionVisits >= 8) {
       _sessionVisits = 0;
       _isTargetGame = false;
-      window.location.href = CDN_BASE + "games/eggroom.html";
+      window.location.href = GAME_BASE + "games/eggroom.html";
       return;
     }
   }
@@ -1331,11 +1362,134 @@ document.addEventListener("keydown", e => {
   }
 });
 
-applyTheme();
-buildCloakGrid();
-buildCDNSelect();
-showSplashText();
-loadGamesList();
+/* ============================================================
+   PWA / Service Worker
+   ============================================================ */
+let swRegistration = null;
+
+async function registerSW() {
+  if (!("serviceWorker" in navigator)) {
+    console.warn("Service Worker not supported.");
+    return;
+  }
+  try {
+    swRegistration = await navigator.serviceWorker.register("sw.js", { scope: "./" });
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "phaaze-status-reply") {
+        const el = document.getElementById("pwaStatus");
+        if (el) el.textContent = "Cached files: " + event.data.count + " (" + event.data.name + ")";
+      }
+    });
+    navigator.serviceWorker.ready.then((reg) => {
+      if (reg.active) reg.active.postMessage({ type: "phaaze-status" });
+    });
+  } catch (e) {
+    console.warn("SW registration failed:", e);
+  }
+}
+
+function checkPWAStatus() {
+  const el = document.getElementById("pwaStatus");
+  if (!el) return;
+  if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
+    el.textContent = "Service worker not active yet. Reload once.";
+    return;
+  }
+  navigator.serviceWorker.controller.postMessage({ type: "phaaze-status" });
+}
+
+async function cacheEverything() {
+  const btn = document.getElementById("pwaCacheBtn");
+  const el = document.getElementById("pwaStatus");
+  if (!btn || !el) return;
+  btn.disabled = true;
+  el.textContent = "Caching…";
+
+  if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
+    el.textContent = "Reload the page first to activate the service worker.";
+    btn.disabled = false;
+    return;
+  }
+
+  try {
+    const files = [
+      "./index.html",
+      "./games.json",
+      "./manifest.json",
+      "./photos/NEWfav.png",
+      "./photos/klona.jpg",
+      "./photos/Unfair-Undyne-cropped.jpg",
+      "./photos/nox__wakfu__render_by_trowo2_dg8n8se-fullview.png",
+      "./photos/truck.png",
+      "./photos/Clustertruck.jpg",
+      "./photos/cookie clicker.jpg",
+      "./photos/endacopia.png",
+      "./photos/fnfscdm.png",
+      "./photos/hl1.png",
+      "./photos/hollowkinght.png",
+      "./photos/silksong.jpg",
+      "./photos/runmo.png",
+      "./photos/ragdollarchers.png",
+      "./photos/crackhouse.png",
+      "./photos/vs sonic round 2.png",
+      "./photos/bad-time-simulator-sans-fight.jpg",
+      "./photos/emujs.png",
+      "./photos/fish.jpg",
+      "./photos/gd.png",
+      "./photos/gta3.png",
+      "./photos/craftmine.png",
+      "./photos/flash.png",
+      "./photos/supermonkeyball.png",
+      "./photos/tree.png",
+      "./assets/tree.png",
+      "./assets/man.mp3",
+      "./games/Klonoa_Empire_of_Dreams.html",
+      "./games/NGAHHHsim.html",
+      "./games/RUINS.html",
+      "./games/wakfumini.html",
+      "./games/BERGENTRUCK 201x.html",
+      "./games/ClusterTruck.html",
+      "./games/Cookie Clicker.html",
+      "./games/ENDACOPIA.html",
+      "./games/Friday Night Funkin': VS. Seek's Cool Deltarune.html",
+      "./games/Half Life.html",
+      "./games/Hollow Knight.html",
+      "./games/Hollow Knight: Silksong.html",
+      "./games/Little Runmo.html",
+      "./games/Ragdoll Archers.html",
+      "./games/Raldi's Crackhouse.html",
+      "./games/VS Rewrite: ROUND 2.html",
+      "./games/badtimesim.html",
+      "./games/emujs.html",
+      "./games/fish.html",
+      "./games/gdweb.html",
+      "./games/gta3.html",
+      "./games/mc1.12.2.html",
+      "./games/ruffle.html",
+      "./games/smb.html",
+      "./games/eggroom.html"
+    ];
+
+    let cached = 0;
+    for (const f of files) {
+      try {
+        const res = await fetch(f, { cache: "reload" });
+        if (res.ok) cached++;
+        el.textContent = "Caching… " + cached + " / " + files.length;
+      } catch (e) {
+      }
+    }
+
+    el.textContent = "Done. Cached " + cached + " of " + files.length + " files.";
+    checkPWAStatus();
+  } catch (e) {
+    el.textContent = "Cache failed: " + e.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+registerSW();
 	</script>
 </body>
 
