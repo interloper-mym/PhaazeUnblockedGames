@@ -1,0 +1,170 @@
+[
+  {
+    "name": "Klonoa Empire of Dreams",
+    "image": "photos/klona.jpg",
+    "path": "games/Klonoa_Empire_of_Dreams.html",
+    "new": false,
+    "category": "retro"
+  },
+  {
+    "name": "Unfaredine",
+    "image": "photos/Unfair-Undyne-cropped.jpg",
+    "path": "games/NGAHHHsim.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "RUINS",
+    "image": "https://image2url.com/r2/default/images/1771619449789-5ff2b5d9-9502-49b9-911d-402e07f74ff0.png",
+    "path": "games/RUINS.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Wakfu Mini",
+    "image": "photos/nox__wakfu__render_by_trowo2_dg8n8se-fullview.png",
+    "path": "games/wakfumini.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "BERGENTRUCK 201X",
+    "image": "photos/truck.png",
+    "path": "games/BERGENTRUCK 201x.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "ClusterTruck",
+    "image": "photos/Clustertruck.jpg",
+    "path": "games/ClusterTruck.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Cookie Clicker",
+    "image": "photos/cookie clicker.jpg",
+    "path": "games/Cookie Clicker.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Endacopia",
+    "image": "photos/endacopia.png",
+    "path": "games/ENDACOPIA.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "FNF: VS. Seek's Cool Deltarune",
+    "image": "photos/fnfscdm.png",
+    "path": "games/Friday Night Funkin': VS. Seek's Cool Deltarune.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Half Life",
+    "image": "photos/hl1.png",
+    "path": "games/Half Life.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Hollow Knight",
+    "image": "photos/hollowkinght.png",
+    "path": "games/Hollow Knight.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Hollow Knight: Silksong",
+    "image": "photos/silksong.jpg",
+    "path": "games/Hollow Knight: Silksong.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Little Runmo",
+    "image": "photos/runmo.png",
+    "path": "games/Little Runmo.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Ragdoll Archers",
+    "image": "photos/ragdollarchers.png",
+    "path": "games/Ragdoll Archers.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Raldi's Crackhouse",
+    "image": "photos/crackhouse.png",
+    "path": "games/Raldi's Crackhouse.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "VS Rewrite: ROUND 2",
+    "image": "photos/vs sonic round 2.png",
+    "path": "games/VS Rewrite: ROUND 2.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Bad Time Simulator",
+    "image": "photos/bad-time-simulator-sans-fight.jpg",
+    "path": "games/badtimesim.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "EmulatorJS",
+    "image": "photos/emujs.png",
+    "path": "games/emujs.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "FISH",
+    "image": "photos/fish.jpg",
+    "path": "games/fish.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Geometry Dash Web",
+    "image": "photos/gd.png",
+    "path": "games/gdweb.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "GTA III",
+    "image": "photos/gta3.png",
+    "path": "games/gta3.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Minecraft 1.12.2",
+    "image": "photos/craftmine.png",
+    "path": "games/mc1.12.2.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Ruffle Player",
+    "image": "photos/flash.png",
+    "path": "games/ruffle.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Super Monkey Ball 1 & 2",
+    "image": "photos/supermonkeyball.png",
+    "path": "games/smb.html",
+    "new": true,
+    "category": "game"
+  }
+]
