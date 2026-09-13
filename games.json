@@ -69,13 +69,13 @@
     "new": true,
     "category": "game"
   },
-  {
-    "name": "Hollow Knight",
-    "image": "photos/hollowknight.jpg",
-    "path": "games/Hollow Knight.html",
-    "new": true,
-    "category": "game"
-  },
+ {
+  "name": "Hollow Knight",
+  "image": "photos/hollowkinght.png",
+  "path": "games/Hollow Knight.html",
+  "new": true,
+  "category": "game"
+},
   {
     "name": "Hollow Knight: Silksong",
     "image": "photos/silksong.jpg",
