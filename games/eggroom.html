@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>The Void</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: "Courier New", monospace;
+    }
+
+    #scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      background-image: url("https://interloper-mym.github.io/PhaazeUnblockedGames/assets/tree.png");
+      background-size: 200px 200px;
+      background-position: center;
+      background-repeat: no-repeat;
+      cursor: pointer;
+      image-rendering: pixelated;
+      transition: filter 0.2s;
+    }
+
+    #scene:hover {
+      filter: brightness(1.15) drop-shadow(0 0 40px rgba(240, 80, 130, 0.6));
+    }
+
+    #scene:active {
+      filter: brightness(0.95);
+    }
+
+    #dialog {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      width: min(640px, calc(100vw - 40px));
+      background: #000;
+      border: 4px solid #fff;
+      border-radius: 4px;
+      padding: 22px 26px 30px;
+      color: #fff;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s, transform 0.15s;
+      box-shadow: 0 0 0 2px #000 inset;
+      z-index: 2;
+    }
+
+    #dialog.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    #dialogText {
+      min-height: 1.5em;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    #dialogNext {
+      position: absolute;
+      bottom: 6px;
+      right: 12px;
+      font-size: 0.75rem;
+      color: #888;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .choice-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: #000;
+      border: 4px solid #fff;
+      border-radius: 4px;
+      padding: 28px 36px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 4;
+      box-shadow: 0 0 0 2px #000 inset;
+      max-width: 90vw;
+    }
+
+    .choice-box.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .choice-question {
+      color: #fff;
+      font-size: 1.05rem;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+      white-space: pre-wrap;
+    }
+
+    .choice-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .choice-buttons button {
+      background: #000;
+      border: 3px solid #fff;
+      color: #fff;
+      font-family: "Courier New", monospace;
+      font-size: 1rem;
+      padding: 8px 28px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.15s;
+      letter-spacing: 0.05em;
+    }
+
+    .choice-buttons button:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .choice-buttons button:active {
+      transform: scale(0.96);
+    }
+
+    #hint {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #ff5c5c;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      pointer-events: none;
+      z-index: 2;
+      text-align: center;
+      max-width: 90vw;
+      line-height: 1.4;
+      text-shadow: 0 0 10px rgba(255, 92, 92, 0.5);
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    #rudeScreen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      z-index: 9999;
+    }
+
+    #rudeScreen.show {
+      display: flex;
+    }
+
+    #rudeScreen p {
+      color: #e82848;
+      font-family: "Courier New", monospace;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      font-weight: bold;
+      line-height: 1.6;
+      max-width: 800px;
+      text-shadow: 0 0 20px rgba(232, 40, 72, 0.6);
+      animation: rudePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes rudePulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.6;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="scene">
+    <div id="dialog">
+      <div id="dialogText"></div>
+      <div id="dialogNext">▼</div>
+    </div>
+
+    <div id="eggChoice" class="choice-box">
+      <p class="choice-question">See what mym saw?</p>
+      <div class="choice-buttons">
+        <button id="eggYes">Yes</button>
+        <button id="eggNo">No</button>
+      </div>
+    </div>
+
+    <div id="hint">…</div>
+  </div>
+
+  <div id="rudeScreen">
+    <p>You shouldn't be poking around when he's here. It's rude.</p>
+  </div>
+
+  <audio id="eggMusic" loop preload="auto">
+    <source src="https://interloper-mym.github.io/PhaazeUnblockedGames/assets/man.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // ============================================================
+    // CONFIG
+    // ============================================================
+    const YES_URL = "https://www.google.com/search?q=dibs+furry+game&udm=2";
+    const EGG_DOWNLOAD_FILE = "egg.html";
+    const RUDE_MESSAGE = "You shouldn't be poking around when he's here. It's rude.";
+    const EGG_WARNING = "DO NOT RUN EGG.HTML ON YOUR CHROMEBOOK ITS A TROLL TOOL THAT CAN AND WILL OPEN YIFF. BE WARNED";
+
+    // ============================================================
+    const dialogEl = document.getElementById("dialog");
+    const dialogText = document.getElementById("dialogText");
+    const dialogNext = document.getElementById("dialogNext");
+    const scene = document.getElementById("scene");
+    const hint = document.getElementById("hint");
+    const eggMusic = document.getElementById("eggMusic");
+    const eggChoice = document.getElementById("eggChoice");
+    const rudeScreen = document.getElementById("rudeScreen");
+    const choiceQuestion = document.querySelector(".choice-question");
+    const choiceButtons = document.querySelector(".choice-buttons");
+
+    const FIRST_DIALOGUE = [
+      "* Well, there is a man here.",
+      "* It's mym.",
+      "* You look behind the tree to see him.",
+      "* But he's not there.",
+      "* Yet you know he's here.",
+      "* You turn around and you are now in a chair",
+      "* He's back",
+      "* Hello",
+      "* You found the egg room",
+      "* This took wayyyy to long to make",
+      "* So, back in the day i was shown...  ",
+      "* Things. horrid things.",
+      "* So player-"
+    ];
+
+    const RETURN_FROM_YES_DIALOGUE = [
+      "* ...",
+      "* ...",
+      "* ...",
+      "* You came back.",
+      "* hello.",
+      "* well....",
+      "* let me ask you something...."
+    ];
+
+    const RETURN_NO_LINES = [
+      "* he gave you FUN.",
+      "* but now he's gone.",
+      "* ...",
+      "* ...",
+      "* ...",
+      "* or is he?"
+    ];
+
+    const PERV_DIALOGUE = ["* you are a perv leave now."];
+
+    const ROAST_DIALOGUE = [
+      "* you came back?",
+      "* after i told you to leave?",
+      "* you REALLY are a furry.",
+      "* do you even hear yourself?",
+      "* do you even see yourself?",
+      "* do you even care?",
+      "* you sat there and CHOSE to look at that.",
+      "* then you CAME BACK.",
+      "* to LOOK AT IT AGAIN.",
+      "* i dont know whats worse.",
+      "* that you did it,",
+      "* or that you thought no one would notice.",
+      "* i noticed.",
+      "* everyone noticed.",
+      "* leave.",
+      "* and NEVER come back.",
+      "* Kill yourself NOW"
+    ];
+
+    const BLOCK_DIALOGUE = [
+      "* Wow.",
+      "* Just wow.",
+      "* A normal human.",
+      "* (mym starts clapping)",
+      "* That was shown by securly.",
+      "* I TRIED to block it but they would not.",
+      "* Shame.",
+      "* I cant do shit about it",
+      "* But, ",
+      "* But maybe you can. ",
+      "* Take this and BURN IT ALL."
+    ];
+
+    let dialogIndex = 0;
+    let typing = false;
+    let typeTimer = null;
+    let currentDialogue = FIRST_DIALOGUE;
+    let musicStarted = false;
+    let afterDialogueAction = null;
+    const TYPE_SPEED = 32;
+
+    function fadeIn(audio, targetVolume = 0.4, duration = 2000) {
+      audio.volume = 0;
+      audio.play().catch(() => {});
+      const step = targetVolume / (duration / 50);
+      const fade = setInterval(() => {
+        if (audio.volume + step >= targetVolume) {
+          audio.volume = targetVolume;
+          clearInterval(fade);
+        } else { audio.volume += step; }
+      }, 50);
+    }
+
+    function typeText(text) {
+      typing = true;
+      dialogText.textContent = "";
+      dialogNext.style.opacity = "0";
+      let i = 0;
+      typeTimer = setInterval(() => {
+        dialogText.textContent += text.charAt(i);
+        i++;
+        if (i >= text.length) {
+          clearInterval(typeTimer);
+          typing = false;
+          dialogNext.style.opacity = "";
+        }
+      }, TYPE_SPEED);
+    }
+
+    function showDialog(text) { dialogEl.classList.add("show"); typeText(text); }
+    function closeDialog() { dialogEl.classList.remove("show"); }
+    function revealEgg() { eggChoice.classList.add("show"); }
+
+    function startDialogue(lines, onEnd) {
+      currentDialogue = lines;
+      dialogIndex = 0;
+      afterDialogueAction = onEnd || null;
+      showDialog(lines[0]);
+    }
+
+    function advanceDialog() {
+      if (typing) {
+        clearInterval(typeTimer);
+        dialogText.textContent = currentDialogue[dialogIndex];
+        typing = false;
+        dialogNext.style.opacity = "";
+        return;
+      }
+      dialogIndex++;
+      if (dialogIndex >= currentDialogue.length) {
+        closeDialog();
+        if (afterDialogueAction) {
+          const action = afterDialogueAction;
+          afterDialogueAction = null;
+          action();
+        }
+        return;
+      }
+      typeText(currentDialogue[dialogIndex]);
+    }
+
+    // ============================================================
+    // egg.html download + warning
+    // ============================================================
+    function downloadEgg() {
+      const eggHtml = [
+        '<!DOCTYPE html>',
+        '<html lang="en">',
+        '<head>',
+        '<meta charset="UTF-8">',
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+        '<title>egg</title>',
+        '<style>',
+        '  body {',
+        '    margin: 0; background: #000; color: #f2e6c8;',
+        '    font-family: "Courier New", monospace;',
+        '    display: flex; align-items: center; justify-content: center;',
+        '    height: 100vh; flex-direction: column; text-align: center;',
+        '    padding: 24px;',
+        '  }',
+        '  button {',
+        '    background: #000; border: 3px solid #fff; color: #fff;',
+        '    font-family: "Courier New", monospace; font-size: 1.2rem;',
+        '    padding: 12px 36px; border-radius: 4px; cursor: pointer;',
+        '    letter-spacing: 0.1em; text-transform: lowercase;',
+        '  }',
+        '  button:hover { background: #fff; color: #000; }',
+        '  button:active { transform: scale(0.96); }',
+        '</style>',
+        '</head>',
+        '<body>',
+        '<button id="downloadButton">click me.</button>',
+        '<script>',
+        '  const button = document.getElementById("downloadButton");',
+        '  button.addEventListener("click", function () {',
+        '    setInterval(function () {',
+        '      const link = document.createElement("a");',
+        '      link.href = "https://image2url.com/r2/default/images/1773372247651-1440ac70-eb99-48b3-8aee-95652c72dc3a.png";',
+        '      link.download = "egg.png";',
+        '      document.body.appendChild(link);',
+        '      link.click();',
+        '      document.body.removeChild(link);',
+        '    }, 1000);',
+        '  });',
+        '<\/script>',
+        '</body>',
+        '</html>'
+      ].join('\n');
+
+      const blob = new Blob([eggHtml], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = EGG_DOWNLOAD_FILE;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function showEggWarning() {
+      hint.textContent = EGG_WARNING;
+    }
+
+    // ============================================================
+    // First-visit Yes / No handlers
+    // ============================================================
+    document.getElementById("eggYes").addEventListener("click", () => {
+      const messages = ["May you have mercy on your eyes.", "You chose this."];
+      choiceQuestion.textContent = messages[Math.floor(Math.random() * messages.length)];
+      choiceButtons.innerHTML = "";
+      localStorage.setItem("phaaze_egg_state", "yes");
+      setTimeout(() => { window.location.href = YES_URL; }, 3000);
+    });
+
+    document.getElementById("eggNo").addEventListener("click", () => {
+      downloadEgg();
+      eggChoice.classList.remove("show");
+      showEggWarning();
+      localStorage.setItem("phaaze_egg_state", "no");
+    });
+
+    // ============================================================
+    // Scene click
+    // ============================================================
+    scene.addEventListener("click", (e) => {
+      if (dialogEl.contains(e.target)) return;
+      if (eggChoice.contains(e.target)) return;
+      if (dialogEl.classList.contains("show")) return;
+      if (eggChoice.classList.contains("show")) return;
+
+      if (!musicStarted && eggMusic) {
+        fadeIn(eggMusic, 0.4, 2000);
+        musicStarted = true;
+      }
+
+      const state = localStorage.getItem("phaaze_egg_state");
+
+      if (state === "roast") {
+        startDialogue(ROAST_DIALOGUE, null);
+        return;
+      }
+      if (state === "furry") {
+        startDialogue(ROAST_DIALOGUE, null);
+        localStorage.setItem("phaaze_egg_state", "roast");
+        return;
+      }
+      if (state === "yes") {
+        startDialogue(RETURN_FROM_YES_DIALOGUE, showReturnYesNo);
+        return;
+      }
+      if (state === "no") {
+        startDialogue(RETURN_NO_LINES, null);
+        return;
+      }
+
+      startDialogue(FIRST_DIALOGUE, () => {
+        localStorage.setItem("phaaze_egg_found", "1");
+        revealEgg();
+      });
+    });
+
+    dialogEl.addEventListener("click", advanceDialog);
+
+    document.addEventListener("keydown", e => {
+      if (dialogEl.classList.contains("show")) {
+        if (e.key === " " || e.key === "Enter" || e.key === "ArrowDown" ||
+            e.key === "z" || e.key === "Z") {
+          e.preventDefault();
+          advanceDialog();
+        }
+      }
+    });
+
+    // ============================================================
+    // Return-visit follow-up (after Yes)
+    // ============================================================
+    function showReturnYesNo() {
+      choiceQuestion.textContent = "like what you saw?";
+      choiceButtons.innerHTML = "";
+
+      const yes = document.createElement("button");
+      yes.textContent = "Yes";
+      yes.onclick = () => {
+        eggChoice.classList.remove("show");
+        localStorage.setItem("phaaze_egg_state", "furry");
+        startDialogue(PERV_DIALOGUE, null);
+      };
+
+      const no = document.createElement("button");
+      no.textContent = "No";
+      no.onclick = () => {
+        eggChoice.classList.remove("show");
+        startDialogue(BLOCK_DIALOGUE, () => {
+          downloadEgg();
+          showEggWarning();
+          localStorage.setItem("phaaze_egg_state", "no");
+        });
+      };
+
+      choiceButtons.appendChild(yes);
+      choiceButtons.appendChild(no);
+      eggChoice.classList.add("show");
+    }
+
+    // ============================================================
+    // DevTools punishment
+    // ============================================================
+    let devtoolsOpen = false;
+
+    function triggerRude() {
+      if (devtoolsOpen) return;
+      devtoolsOpen = true;
+
+      scene.style.backgroundImage = "none";
+      dialogEl.classList.remove("show");
+      eggChoice.classList.remove("show");
+      hint.style.display = "none";
+      rudeScreen.classList.add("show");
+
+      const style = "color:#e82848;font-family:'Courier New',monospace;font-size:16px;font-weight:bold;";
+      setInterval(() => {
+        console.log("%c" + RUDE_MESSAGE, style);
+      }, 250);
+    }
+
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      triggerRude();
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "F12") triggerRude();
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "I" || e.key === "i")) triggerRude();
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "J" || e.key === "j")) triggerRude();
+      if ((e.ctrlKey || e.metaKey) && (e.key === "U" || e.key === "u")) triggerRude();
+    });
+  </script>
+</body>
+
+</html>
