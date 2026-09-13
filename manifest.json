@@ -1,0 +1,25 @@
+{
+  "name": "Phaaze Games",
+  "short_name": "Phaaze",
+  "description": "Better than Securly.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0f1019",
+  "background_color": "#0f1019",
+  "icons": [
+    {
+      "src": "photos/NEWfav.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "photos/NEWfav.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
