@@ -200,9 +200,6 @@
 			border-color: var(--accent);
 		}
 
-		/* ============================================================
-		   WIDE GRID — updated for more cards per row on big screens
-		   ============================================================ */
 		#gamesContainer {
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -487,6 +484,70 @@
 			margin-top: 10px;
 		}
 
+		/* ===== CDN selector ===== */
+		.cdn-row {
+			display: flex;
+			gap: 8px;
+			align-items: stretch;
+		}
+
+		#cdnSelect {
+			flex: 1;
+			padding: 10px 12px;
+			border-radius: 10px;
+			border: 1px solid var(--border);
+			background: var(--bg);
+			color: var(--text);
+			font-size: 0.85rem;
+			font-family: inherit;
+		}
+
+		#cdnSelect:focus {
+			outline: none;
+			border-color: var(--accent);
+		}
+
+		#cdnTestBtn {
+			background: var(--surface-hover);
+			border: 1px solid var(--border);
+			color: var(--text);
+			padding: 0 14px;
+			border-radius: 10px;
+			cursor: pointer;
+			font-size: 0.8rem;
+			font-family: inherit;
+			white-space: nowrap;
+		}
+
+		#cdnTestBtn:hover {
+			border-color: var(--accent);
+		}
+
+		#cdnTestBtn:disabled {
+			opacity: 0.6;
+			cursor: wait;
+		}
+
+		#cdnStatus {
+			margin-top: 8px;
+			font-size: 0.75rem;
+			color: var(--muted);
+			min-height: 1em;
+			word-break: break-all;
+		}
+
+		#cdnStatus.ok {
+			color: #6ee787;
+		}
+
+		#cdnStatus.bad {
+			color: #ff7b72;
+		}
+
+		#cdnStatus.working {
+			color: var(--muted);
+		}
+
 		.credits-section {
 			margin-bottom: 26px;
 		}
@@ -626,6 +687,20 @@
       </button>
 			</div>
 			<div class="modal-body">
+
+				<div class="settings-section">
+					<h3>Content Source (CDN)</h3>
+					<div class="cdn-row">
+						<select id="cdnSelect"></select>
+						<button id="cdnTestBtn" onclick="testCDN()">Test</button>
+					</div>
+					<div id="cdnStatus"></div>
+					<p class="settings-note">
+						Switches where the site loads from. Changing the source reloads the page.
+						Some games pull assets from their own hardcoded URLs and may not fully switch.
+					</p>
+				</div>
+
 				<div class="settings-section">
 					<h3>Tab Cloak</h3>
 					<div class="cloak-grid" id="cloakGrid"></div>
@@ -633,12 +708,14 @@
 						Changes the tab title and icon. Doesn't hide the page content itself.
 					</p>
 				</div>
+
 				<div class="settings-section">
 					<h3>Panic Key</h3>
 					<p class="settings-note" style="margin-top:0;">
 						Press <strong>\</strong> anytime to jump straight to Schoology.
 					</p>
 				</div>
+
 			</div>
 		</div>
 	</div>
@@ -793,11 +870,83 @@ const CLOAK_FLAVORS = {
   }
 };
 
+/* ============================================================
+   CDN CONFIG
+   ============================================================ */
+const GITHUB_USER = "interloper-mym";
+const GITHUB_REPO = "PhaazeUnblockedGames";
+const CDN_BRANCH = "main";
+
+const CDN_OPTIONS = {
+  github: {
+    label: "GitHub Pages (Direct)",
+    base: `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/`
+  },
+  jsdelivr: {
+    label: "jsDelivr (cdn.jsdelivr.net)",
+    base: `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${CDN_BRANCH}/`
+  },
+  fastly: {
+    label: "jsDelivr (fastly.jsdelivr.net)",
+    base: `https://fastly.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${CDN_BRANCH}/`
+  },
+  gcore: {
+    label: "jsDelivr (gcore.jsdelivr.net)",
+    base: `https://gcore.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${CDN_BRANCH}/`
+  },
+  testingcf: {
+    label: "jsDelivr (testingcf.jsdelivr.net)",
+    base: `https://testingcf.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${CDN_BRANCH}/`
+  },
+  statically: {
+    label: "Statically (cdn.statically.io)",
+    base: `https://cdn.statically.io/gh/${GITHUB_USER}/${GITHUB_REPO}/${CDN_BRANCH}/`
+  },
+  githack: {
+    label: "Githack (raw.githack.com)",
+    base: `https://raw.githack.com/${GITHUB_USER}/${GITHUB_REPO}/${CDN_BRANCH}/`
+  }
+};
+
+const CDN_STORAGE_KEY = "phaaze_cdn";
+const DEFAULT_CDN = "github";
+
+let CDN_BASE = CDN_OPTIONS[DEFAULT_CDN].base;
+
+function loadStoredCDN() {
+  try {
+    const saved = localStorage.getItem(CDN_STORAGE_KEY);
+    if (saved && CDN_OPTIONS[saved]) {
+      CDN_BASE = CDN_OPTIONS[saved].base;
+      return saved;
+    }
+  } catch (e) {}
+  return DEFAULT_CDN;
+}
+
+function setCDN(key, reload = true) {
+  if (!CDN_OPTIONS[key]) return;
+  try {
+    localStorage.setItem(CDN_STORAGE_KEY, key);
+  } catch (e) {}
+  CDN_BASE = CDN_OPTIONS[key].base;
+  if (reload) {
+    window.location.reload();
+  }
+}
+
+let currentCDNKey = loadStoredCDN();
+
+/* ============================================================ */
+
 let currentCloak = "none";
 const faviconLink = document.getElementById("faviconLink");
 const settingsOverlay = document.getElementById("settingsOverlay");
 const creditsOverlay = document.getElementById("creditsOverlay");
 const cloakGrid = document.getElementById("cloakGrid");
+const cdnSelect = document.getElementById("cdnSelect");
+const cdnStatus = document.getElementById("cdnStatus");
+const cdnTestBtn = document.getElementById("cdnTestBtn");
 
 function applyCloak(name) {
   const flavor = CLOAK_FLAVORS[name];
@@ -820,6 +969,48 @@ function buildCloakGrid() {
     btn.onclick = () => applyCloak(key);
     cloakGrid.appendChild(btn);
   });
+}
+
+function buildCDNSelect() {
+  cdnSelect.innerHTML = "";
+  Object.entries(CDN_OPTIONS).forEach(([key, opt]) => {
+    const el = document.createElement("option");
+    el.value = key;
+    el.textContent = opt.label;
+    if (key === currentCDNKey) el.selected = true;
+    cdnSelect.appendChild(el);
+  });
+  cdnSelect.onchange = () => {
+    const key = cdnSelect.value;
+    if (key === currentCDNKey) return;
+    setCDN(key, true);
+  };
+}
+
+async function testCDN() {
+  const key = cdnSelect.value;
+  const opt = CDN_OPTIONS[key];
+  if (!opt) return;
+  cdnStatus.className = "working";
+  cdnStatus.textContent = "Testing " + opt.label + "…";
+  cdnTestBtn.disabled = true;
+  const testUrl = opt.base + "games.json?t=" + Date.now();
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(testUrl, { signal: controller.signal, cache: "no-store" });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error("Not a valid games.json");
+    cdnStatus.className = "ok";
+    cdnStatus.textContent = "✅ OK — " + data.length + " games found via " + opt.label;
+  } catch (err) {
+    cdnStatus.className = "bad";
+    cdnStatus.textContent = "❌ Failed: " + (err.message || err);
+  } finally {
+    cdnTestBtn.disabled = false;
+  }
 }
 
 function openSettings() { settingsOverlay.classList.add("open"); }
@@ -853,10 +1044,6 @@ function applyTheme() {
   const footerNameEl = document.getElementById("footerSiteName");
   if (footerNameEl) footerNameEl.textContent = SITE_NAME;
 }
-
-const GITHUB_USER = "interloper-mym";
-const GITHUB_REPO = "PhaazeUnblockedGames";
-const CDN_BASE = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/`;
 
 const splashes = [
   "Off to go hang myself!",
@@ -905,7 +1092,7 @@ async function loadGamesList() {
     container.innerHTML =
       '<p class="empty-state">Couldn\'t load games.json (' +
       String(err.message).replace(/</g, "&lt;") +
-      "). Check GITHUB_USER/REPO at the top of the script, and that games.json exists in your repo.</p>";
+      "). Try switching the CDN in Settings, or check that games.json exists in your repo.</p>";
     return;
   }
   buildCategoryBar();
@@ -1076,9 +1263,9 @@ function triggerDownload(content, filename, mime) {
   URL.revokeObjectURL(url);
 }
 
-// ============================================================
-// Session state for the game viewer
-// ============================================================
+/* ============================================================
+   Session state for the game viewer
+   ============================================================ */
 let _sessionVisits = 0;
 let _lastCloseAt = 0;
 let _isTargetGame = false;
@@ -1146,6 +1333,7 @@ document.addEventListener("keydown", e => {
 
 applyTheme();
 buildCloakGrid();
+buildCDNSelect();
 showSplashText();
 loadGamesList();
 	</script>
