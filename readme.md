@@ -1,11 +1,7 @@
 <h2 align=center> NO ONE CARES! THIS MINE NOW!
 i copyed this so i could use my html files but there was no templates so i made/stole this one! copy if you want.
 
-
-
-
-<div align=center> 
-<img title="a title" alt="Alt text" src="nativess.png" height="350" /></div>
+[![](https://data.jsdelivr.com/v1/package/gh/interloper-mym/PhaazeUnblockedGames/badge)](https://www.jsdelivr.com/package/gh/interloper-mym/PhaazeUnblockedGames)
 
 <h2 align=center> Native. Unblocked games site template </h1>
 
