@@ -16,14 +16,14 @@
   {
     "name": "RUINS",
     "image": "https://image2url.com/r2/default/images/1771619449789-5ff2b5d9-9502-49b9-911d-402e07f74ff0.png",
-    "path": "games/RUINS.html",
+    "path": "tools-pr0xys-etc/RUINS.html",
     "new": true,
     "category": "proxy/tool"
   },
   {
     "name": "Wakfu Mini",
     "image": "photos/nox__wakfu__render_by_trowo2_dg8n8se-fullview.png",
-    "path": "games/wakfumini.html",
+    "path": "tools-pr0xys-etc/wakfumini.html",
     "new": true,
     "category": "proxy/tool"
   },
@@ -121,7 +121,7 @@
   {
     "name": "EmulatorJS",
     "image": "photos/emujs.png",
-    "path": "games/emujs.html",
+    "path": "tools-pr0xys-etc/emujs.html",
     "new": true,
     "category": "proxy/tool"
   },
@@ -156,7 +156,7 @@
   {
     "name": "Ruffle Player",
     "image": "photos/flash.png",
-    "path": "games/ruffle.html",
+    "path": "tools-pr0xys-etc/ruffle.html",
     "new": true,
     "category": "proxy/tool"
   },
