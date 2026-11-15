@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Storm 0S</title></head>
+<body style="margin:0;background:#0b0b19;color:#eee;font-family:Arial,sans-serif">
+<p id="status" style="padding:24px">Loading the latest Storm0S…</p>
+<script>
+(async()=>{
+ const repo='altaltalt717-png/code',key='storm-loader-altaltalt717-code-commit';
+ let latest='',saved='';
+ try{saved=localStorage.getItem(key)||''}catch{}
+ try{
+  const r=await fetch('https://api.github.com/repos/'+repo+'/commits/main',{cache:'no-store',signal:AbortSignal.timeout(8000)});
+  if(r.ok){const data=await r.json();if(/^[a-f0-9]{40}$/.test(data.sha))latest=data.sha}
+ }catch{}
+ const refs=[...new Set([latest,/^[a-f0-9]{40}$/.test(saved)?saved:'','main'].filter(Boolean))];
+ for(const ref of refs){
+  for(const host of ['cdn.jsdelivr.net','fastly.jsdelivr.net','gcore.jsdelivr.net']){
+   try{
+    const r=await fetch('https://'+host+'/gh/'+repo+'@'+ref+'/turtle.html',{signal:AbortSignal.timeout(20000)});
+    if(!r.ok)continue;
+    const html=await r.text();
+    if(!/<html[\s>]/i.test(html)||!html.includes('homeView'))continue;
+    if(ref!=='main')try{localStorage.setItem(key,ref)}catch{}
+    document.open();document.write(html);document.close();return;
+   }catch{}
+  }
+ }
+ document.getElementById('status').textContent='Storm0S could not load. Check your connection and reload.';
+})();
+</script></body></html>
