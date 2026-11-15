@@ -166,5 +166,96 @@
     "path": "games/smb.html",
     "new": false,
     "category": "game"
+  },
+  {
+    "name": "Blobwifi",
+    "image": "photos/blobwifi.png",
+    "path": "tools-pr0xys-etc/Blobwifi - JSitor.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Cloudmoon",
+    "image": "photos/cloudmoon.png",
+    "path": "tools-pr0xys-etc/Cloudmoon.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Data URL Generator",
+    "image": "photos/dataurl.png",
+    "path": "tools-pr0xys-etc/Data URL Generator.htm",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "ExtHang3r",
+    "image": "photos/exthang3r.png",
+    "path": "tools-pr0xys-etc/ExtHang3r.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "GUST",
+    "image": "photos/gust.png",
+    "path": "tools-pr0xys-etc/GUST-Patched.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Gemma AI",
+    "image": "photos/gemma.png",
+    "path": "tools-pr0xys-etc/Gemma ai.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Hapara Bypass",
+    "image": "photos/hapara.png",
+    "path": "tools-pr0xys-etc/HaparaBypass-Iframe.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Catclass",
+    "image": "photos/catclass.png",
+    "path": "tools-pr0xys-etc/catclass.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "GN",
+    "image": "photos/gn.png",
+    "path": "tools-pr0xys-etc/gn.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Guava",
+    "image": "photos/guava.png",
+    "path": "tools-pr0xys-etc/guava.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Sandstone",
+    "image": "photos/sandstone.png",
+    "path": "tools-pr0xys-etc/sandstone.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Storm",
+    "image": "photos/storm.png",
+    "path": "tools-pr0xys-etc/storm.html",
+    "new": true,
+    "category": "proxy/tool"
+  },
+  {
+    "name": "Zaka",
+    "image": "photos/zaka.png",
+    "path": "tools-pr0xys-etc/zaka.html",
+    "new": true,
+    "category": "proxy/tool"
   }
 ]
