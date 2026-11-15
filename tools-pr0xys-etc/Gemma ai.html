@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemma 270m Chat</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rhulha/Gemma3-270m-WebGPU@main/css/style.css">
+    <link rel="icon" href="https://cdn.jsdelivr.net/gh/rhulha/Gemma3-270m-WebGPU@main/img/favicon.svg" type="image/svg+xml">
+
+    <script>
+        (function () {
+            const redirects = {
+                'config.json': 'https://quizizz.com/_media/uploads/1a4701e6-ffd9-4048-a8ab-9f01875894c0-v2',
+                'tokenizer_config.json': 'https://quizizz.com/_media/uploads/48a7c877-cbc7-48ee-9d1d-c78e59295655-v2',
+                'generation_config.json': 'https://quizizz.com/_media/uploads/664cc98f-9bad-4f43-9f4f-1aa98f07526e-v2',
+                'tokenizer.json': 'https://quizizz.com/_media/uploads/5c262afc-2d70-4d1b-b8e3-10735f6f2cc7-v2',
+                'model.onnx_data': 'https://quizizz.com/_media/uploadedFiles/410ba540-9e85-48a3-b6cf-94896764bee8-v2'
+            };
+
+            function findRedirect(url) {
+                try {
+                    const pathname = new URL(url, location.href).pathname;
+                    const filename = pathname.split('/').pop();
+                    if (redirects[filename]) return redirects[filename];
+                } catch (e) {}
+
+                for (const key in redirects) {
+                    if (url.includes(key)) return redirects[key];
+                }
+                return null;
+            }
+
+            const originalFetch = window.fetch;
+            window.fetch = function (input, init) {
+                let url = null;
+                let isRequest = false;
+
+                if (typeof input === 'string') {
+                    url = input;
+                } else if (input instanceof URL) {
+                    url = input.href;
+                } else if (input instanceof Request) {
+                    url = input.url;
+                    isRequest = true;
+                }
+
+                if (url) {
+                    const redirectUrl = findRedirect(url);
+                    if (redirectUrl) {
+                        console.log('[Redirect]', url, '→', redirectUrl);
+                        if (isRequest) {
+                            input = new Request(redirectUrl, {
+                                method: input.method,
+                                headers: input.headers,
+                                mode: input.mode,
+                                credentials: input.credentials,
+                                cache: input.cache,
+                                redirect: input.redirect,
+                                referrer: input.referrer,
+                                integrity: input.integrity,
+                                signal: input.signal
+                            });
+                        } else {
+                            input = redirectUrl;
+                        }
+                    }
+                }
+
+                return originalFetch.call(this, input, init);
+            };
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💎 Gemma 270m Chat</h1>
+            <div class="model-status">
+                <span id="model-status">Model: Not loaded</span>
+                <div id="loading-progress" class="loading-progress hidden">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <span id="progress-text">Loading...</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="chat-container" class="chat-container">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message assistant-message">
+                        <div class="message-content">
+                            <p>Hello! I'm Gemma 270m. Click "Load Model" to start chatting with me! Just a heads up: I'm ultra compact and lightweight, I can't access the internet, and I hallucinate often. I'm running locally in your browser, so my response time and performance depend on your device. Use me just to play around — please don't use me for anything serious.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-group">
+                    <textarea
+                        id="user-input"
+                        placeholder="Type your message here..."
+                        rows="1"
+                        disabled
+                    ></textarea>
+                    <button id="send-button" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22,2 15,22 11,13 2,9"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                <div class="controls">
+                    <button id="load-model-button" class="load-button">Load Model</button>
+                    <button id="clear-chat-button" class="clear-button" disabled>Clear Chat</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/rhulha/Gemma3-270m-WebGPU@main/js/main.js"></script>
+</body>
+</html>
