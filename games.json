@@ -6,6 +6,20 @@
     "new": false,
     "category": "retro"
   },
+   {
+    "name": "MeatBoy",
+    "image": "photos/meatboy.jpg",
+    "path": "games/meatboy.html",
+    "new": true,
+    "category": "game"
+  },
+  {
+    "name": "Wipeout 64",
+    "image": "photos/wipeout64.jpg",
+    "path": "games/wipeout64.html",
+    "new": true,
+    "category": "game"
+  },
   {
     "name": "Unfaredine",
     "image": "photos/Unfair-Undyne-cropped.jpg",
